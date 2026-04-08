@@ -1,0 +1,3665 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+  Content-Security-Policy: restricts which scripts/styles/images can load.
+  'unsafe-inline' is required because all JS/CSS is inline (single-file app).
+  In a multi-file deployment, remove 'unsafe-inline' and use nonces instead.
+-->
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self';
+           script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+           style-src  'self' 'unsafe-inline' https://fonts.googleapis.com;
+           font-src   https://fonts.gstatic.com;
+           img-src    'self' data: blob:;
+           connect-src 'self';
+           object-src 'none';
+           base-uri   'self';">
+<title>شجرة عائلة المجاحيد سواعد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<!--
+  SRI (Subresource Integrity): prevents loading if CDN is compromised.
+  To enable: go to https://srihash.org, paste the D3 URL, copy the hash
+  and add: integrity="sha512-HASH_HERE"
+  Left disabled here to avoid breaking the app with an unverified hash.
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+<style>
+:root {
+  --bg:       #080c14;
+  --bg2:      #0d1220;
+  --surface:  #111827;
+  --surface2: #1a2236;
+  --surface3: #1f2d44;
+  --border:   #243047;
+  --border2:  #2e3f5c;
+  --gold:     #c9a84c;
+  --gold2:    #e8c878;
+  --gold3:    #f5e0a0;
+  --blue:     #3b82f6;
+  --blue2:    #60a5fa;
+  --teal:     #14b8a6;
+  --violet:   #8b5cf6;
+  --rose:     #f43f5e;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --success:  #10b981;
+  --warning:  #f59e0b;
+  --danger:   #ef4444;
+
+  --g1: #a855f7; --g1b: #1e0f3a;
+  --g2: #06b6d4; --g2b: #042330;
+  --g3: #f59e0b; --g3b: #2d1a00;
+  --g4: #3b82f6; --g4b: #0c1e40;
+  --g5: #10b981; --g5b: #032817;
+  --g6: #f43f5e; --g6b: #300a14;
+  --g7: #8b5cf6; --g7b: #1a0f35;
+  --g8: #14b8a6; --g8b: #031e1c;
+  --g9: #fb923c; --g9b: #2d1200;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+html,body{
+  height:100%;
+  font-family:'Tajawal',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
+}
+
+/* ── HEADER ───────────────────────────── */
+#header{
+  height:56px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  position:relative;
+  z-index:50;
+  gap:10px;
+  flex-shrink:0;
+}
+
+.header-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+
+.brand-icon{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+.brand-title{
+  font-family:'Amiri',serif;
+  font-size:17px;
+  font-weight:700;
+  background:linear-gradient(90deg,var(--gold2),var(--gold3));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  white-space:nowrap;
+}
+
+.brand-sub{
+  font-size:10px;
+  color:var(--text3);
+  margin-top:1px;
+  white-space:nowrap;
+}
+
+.header-center{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-width:0;
+}
+
+.search-box{
+  position:relative;
+  width:220px;
+}
+.search-box input{
+  width:100%;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text);
+  padding:7px 12px 7px 36px;
+  font-family:'Tajawal',sans-serif;
+  font-size:13px;
+  direction:rtl;
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-box input:focus{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(201,168,76,.12);
+}
+.search-box::after{
+  content:'⌕';
+  position:absolute;
+  left:10px;top:50%;
+  transform:translateY(-50%);
+  color:var(--text3);
+  font-size:16px;
+  pointer-events:none;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+
+/* ── BUTTONS ────────────────────────────── */
+.btn{
+  padding:7px 14px;
+  border-radius:7px;
+  border:none;
+  font-family:'Tajawal',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),#b8922f);
+  color:#0d0800;
+  font-weight:700;
+  box-shadow:0 2px 8px rgba(201,168,76,.3);
+}
+.btn-gold:hover{box-shadow:0 4px 16px rgba(201,168,76,.4)}
+
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563eb}
+
+.btn-ghost{
+  background:var(--surface2);
+  color:var(--text2);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+
+.btn-danger{background:rgba(239,68,68,.15);color:var(--danger);border:1px solid rgba(239,68,68,.3)}
+.btn-danger:hover{background:rgba(239,68,68,.25)}
+
+.btn-success{background:rgba(16,185,129,.15);color:var(--success);border:1px solid rgba(16,185,129,.3)}
+.btn-success:hover{background:rgba(16,185,129,.25)}
+
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px}
+
+/* ── UNSAVED BADGE ───────────────────── */
+.unsaved-badge{
+  display:none;
+  align-items:center;
+  gap:5px;
+  background:rgba(245,158,11,.1);
+  border:1px solid rgba(245,158,11,.4);
+  color:var(--warning);
+  border-radius:6px;
+  padding:4px 10px;
+  font-size:12px;
+  animation:pulse-badge 2s ease-in-out infinite;
+}
+.unsaved-badge.show{display:flex}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── MAIN LAYOUT ─────────────────────── */
+#app{
+  display:flex;
+  height:calc(100vh - 56px);
+}
+
+/* ── SIDEBAR ─────────────────────────── */
+#sidebar{
+  width:280px;
+  min-width:280px;
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  transition:width .3s,min-width .3s;
+}
+
+.sidebar-tabs{
+  display:flex;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.tab-btn{
+  flex:1;
+  padding:10px 8px;
+  background:none;
+  border:none;
+  color:var(--text3);
+  font-family:'Tajawal',sans-serif;
+  font-size:12px;
+  cursor:pointer;
+  transition:all .2s;
+  border-bottom:2px solid transparent;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.tab-btn.active{
+  color:var(--gold2);
+  border-bottom-color:var(--gold);
+  background:rgba(201,168,76,.05);
+}
+.tab-btn:hover:not(.active){color:var(--text2)}
+
+.tab-panel{display:none;flex-direction:column;flex:1;overflow:hidden}
+.tab-panel.active{display:flex}
+
+.sidebar-body{overflow-y:auto;flex:1;padding:12px}
+
+/* ── PERSON CARD ─────────────────────── */
+.person-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:10px;
+  animation:slideIn .2s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.person-card-header{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.person-avatar{
+  width:44px;height:44px;
+  border-radius:10px;
+  background:var(--surface3);
+  border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  flex-shrink:0;
+  overflow:hidden;
+  cursor:pointer;
+  transition:border-color .2s;
+}
+.person-avatar:hover{border-color:var(--gold)}
+.person-avatar img{width:100%;height:100%;object-fit:cover}
+
+.person-info-main h3{
+  font-size:16px;
+  font-weight:700;
+  line-height:1.3;
+}
+.gen-tag{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:12px;
+  font-size:10px;
+  font-weight:500;
+  margin-top:4px;
+}
+
+.info-row{
+  font-size:12px;
+  color:var(--text2);
+  padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  display:flex;
+  align-items:flex-start;
+  gap:6px;
+  line-height:1.5;
+}
+.info-row:last-child{border-bottom:none}
+.info-row .label{color:var(--text3);min-width:56px;flex-shrink:0}
+.info-row .val{color:var(--text);flex:1}
+
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chip{
+  background:var(--surface3);
+  border:1px solid var(--border2);
+  border-radius:5px;
+  padding:2px 8px;
+  font-size:11px;
+  color:var(--text2);
+  cursor:pointer;
+  transition:all .15s;
+}
+.chip:hover{border-color:var(--gold);color:var(--gold2)}
+
+.action-bar{
+  display:flex;
+  gap:6px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+
+/* ── STATS PANEL ─────────────────────── */
+.stat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:12px;
+}
+.stat-box{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:12px;
+  text-align:center;
+}
+.stat-num{
+  font-size:24px;
+  font-weight:800;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.stat-label{font-size:11px;color:var(--text3);margin-top:2px}
+
+.gen-list{display:flex;flex-direction:column;gap:5px}
+.gen-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:7px;
+}
+.gen-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.gen-row-label{font-size:12px;flex:1}
+.gen-count{
+  font-size:12px;
+  font-weight:700;
+  color:var(--gold2);
+}
+
+/* ── TREE AREA ───────────────────────── */
+#treeArea{
+  flex:1;
+  overflow:hidden;
+  background:var(--bg);
+  position:relative;
+}
+
+#treeArea svg{
+  width:100%;
+  height:100%;
+  cursor:grab;
+}
+#treeArea svg:active{cursor:grabbing}
+
+/* Grid bg */
+#treeArea::before{
+  content:'';
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--surface2) 1px,transparent 1px),
+    linear-gradient(90deg,var(--surface2) 1px,transparent 1px);
+  background-size:40px 40px;
+  opacity:.35;
+  pointer-events:none;
+}
+
+/* ── MINIMAP ────────────────────────── */
+#minimap{
+  position:absolute;
+  bottom:14px;
+  right:14px;
+  width:160px;
+  height:100px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+  z-index:20;
+}
+#minimapSvg{width:100%;height:100%}
+#minimapViewport{
+  fill:rgba(201,168,76,.12);
+  stroke:var(--gold);
+  stroke-width:1;
+  rx:3;
+}
+
+/* ── CONTROLS ───────────────────────── */
+#treeControls{
+  position:absolute;
+  bottom:14px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:10px;
+  padding:6px 10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+  z-index:20;
+}
+
+.ctrl-btn{
+  width:30px;height:30px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  color:var(--text2);
+  font-size:14px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.ctrl-btn:hover{border-color:var(--gold);color:var(--gold2)}
+.ctrl-btn:active{transform:scale(.93)}
+
+.zoom-level{
+  font-size:12px;
+  color:var(--text3);
+  min-width:42px;
+  text-align:center;
+}
+
+/* ── TOOLTIP ────────────────────────── */
+#tooltip{
+  position:absolute;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:8px 12px;
+  font-size:12px;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .15s;
+  z-index:100;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+  max-width:200px;
+  line-height:1.5;
+}
+#tooltip.show{opacity:1}
+
+/* ── MODAL ──────────────────────────── */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.75);
+  z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;
+  transition:opacity .22s;
+}
+.overlay.open{opacity:1;pointer-events:all}
+
+.modal{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:28px;
+  width:400px;max-width:92vw;
+  max-height:90vh;overflow-y:auto;
+  transform:translateY(24px);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+  direction:rtl;
+}
+.overlay.open .modal{transform:translateY(0)}
+
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+.modal-header h2{font-size:18px;font-weight:700}
+.modal-close{
+  width:28px;height:28px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:6px;
+  color:var(--text2);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+  transition:all .15s;
+}
+.modal-close:hover{border-color:var(--danger);color:var(--danger)}
+
+.form-group{margin-bottom:14px}
+.form-group label{
+  display:block;
+  font-size:12px;
+  color:var(--text3);
+  margin-bottom:6px;
+  font-weight:500;
+}
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text);
+  padding:9px 12px;
+  font-family:'Tajawal',sans-serif;
+  font-size:13px;
+  direction:rtl;
+  transition:border-color .2s,box-shadow .2s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(201,168,76,.1);
+}
+.form-group select option{background:var(--surface2)}
+.form-group textarea{resize:vertical;min-height:72px}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.modal-footer{
+  display:flex;gap:8px;
+  margin-top:20px;
+  justify-content:flex-end;
+}
+
+/* ── TOAST ──────────────────────────── */
+#toast{
+  position:fixed;
+  bottom:20px;left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 20px;
+  font-size:13px;
+  z-index:500;
+  opacity:0;
+  transition:all .25s;
+  pointer-events:none;
+  white-space:nowrap;
+  box-shadow:0 4px 24px rgba(0,0,0,.5);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.success{border-color:var(--success);color:var(--success)}
+#toast.error{border-color:var(--danger);color:var(--danger)}
+#toast.warn{border-color:var(--warning);color:var(--warning)}
+
+/* ── EMPTY STATE ─────────────────────── */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:40px 20px;
+  color:var(--text3);text-align:center;
+}
+.empty-state .icon{font-size:36px;margin-bottom:12px;opacity:.5}
+.empty-state p{font-size:13px;line-height:1.6}
+
+/* ── SCROLLBAR ───────────────────────── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+
+/* ── CONTEXT MENU ────────────────────── */
+#ctxMenu{
+  position:fixed;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:5px;
+  z-index:300;
+  display:none;
+  min-width:150px;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  direction:rtl;
+}
+#ctxMenu.show{display:block}
+.ctx-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;
+  border-radius:5px;
+  font-size:13px;
+  cursor:pointer;
+  color:var(--text2);
+  transition:all .1s;
+}
+.ctx-item:hover{background:var(--surface2);color:var(--text)}
+.ctx-item.danger:hover{background:rgba(239,68,68,.1);color:var(--danger)}
+.ctx-sep{height:1px;background:var(--border);margin:4px 0}
+
+/* ── SEARCH RESULTS ───────────────────── */
+.search-results{
+  position:absolute;
+  top:calc(100% + 4px);
+  right:0;left:0;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  overflow:hidden;
+  z-index:60;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  max-height:240px;
+  overflow-y:auto;
+}
+.search-item{
+  padding:8px 12px;
+  cursor:pointer;
+  font-size:13px;
+  display:flex;align-items:center;gap:8px;
+  transition:background .12s;
+  border-bottom:1px solid var(--border);
+}
+.search-item:last-child{border-bottom:none}
+.search-item:hover,.search-item.active{background:var(--surface2)}
+.search-item.active{border-right:2px solid var(--gold)}
+.search-item .si-gen{font-size:10px;color:var(--text3);margin-right:auto}
+
+/* ── PERSON CARD ANIMATION ───────────────── */
+.person-card{
+  animation:cardIn .22s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── CHIP HOVER ───────────────────────────── */
+.chip{
+  transition:background .15s,border-color .15s,transform .12s;
+}
+.chip:hover{
+  transform:translateY(-1px);
+  background:var(--surface3);
+  border-color:var(--gold);
+  color:var(--gold2);
+}
+
+/* ── SIDEBAR PANEL TRANSITION ─────────────── */
+.tab-panel{
+  opacity:0;
+  transition:opacity .18s;
+}
+.tab-panel.active{
+  opacity:1;
+}
+
+/* action-bar and overlay defined above; only augment here */
+.action-bar{ padding-top:12px; border-top:1px solid var(--border); margin-top:14px; }
+
+/* ── PATH HIGHLIGHT ───────────────────── */
+.path-line{stroke:var(--gold)!important;stroke-width:2.5!important;opacity:1!important}
+.path-node rect{fill:var(--gold)!important;stroke:var(--gold2)!important}
+
+/* ─────────────────────────────────────────────────────────
+   NEW FEATURE CSS
+   ──────────────────────────────────────────────────────── */
+
+/* ── LIGHT MODE ─────────────────────────────────────────── */
+body.light-mode {
+  --bg:#f0f4f8; --bg2:#e8edf3; --surface:#ffffff; --surface2:#f1f5f9;
+  --surface3:#e2e8f0; --border:#cbd5e1; --border2:#94a3b8;
+  --text:#1e293b; --text2:#475569; --text3:#64748b;
+}
+body.light-mode #treeArea::before{opacity:.15}
+body.light-mode #treeArea{background:#f0f4f8}
+
+/* ── PHOTO AVATAR (person card + tree node) ─────────────── */
+.person-avatar{
+  width:56px; height:56px; border-radius:12px;
+  background:var(--surface3); border:2px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; flex-shrink:0; cursor:pointer;
+  transition:border-color .2s; overflow:hidden; position:relative;
+}
+.person-avatar img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.person-avatar:hover{border-color:var(--gold)}
+.avatar-hint{
+  position:absolute;inset:0;background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#fff;opacity:0;transition:opacity .2s;
+  text-align:center;padding:4px;border-radius:10px;
+}
+.person-avatar:hover .avatar-hint{opacity:1}
+
+/* ── PHOTO UPLOAD MODAL ──────────────────────────────────── */
+.drop-zone{
+  border:2px dashed var(--border2); border-radius:10px;
+  padding:24px 16px; text-align:center; cursor:pointer;
+  transition:all .2s; color:var(--text3);
+}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.05)}
+.drop-zone .dz-icon{font-size:32px;margin-bottom:8px}
+#photoPreview{width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-top:10px;display:none}
+
+/* ── BIRTHDAY BANNER ─────────────────────────────────────── */
+#birthdayBanner{
+  display:none; background:rgba(201,168,76,.1); border-bottom:1px solid rgba(201,168,76,.3);
+  padding:7px 16px; font-size:12px; color:var(--gold2);
+  align-items:center; gap:8px; flex-shrink:0;
+}
+#birthdayBanner.show{display:flex}
+
+/* ── HAMBURGER BUTTON (mobile sidebar) ──────────────────── */
+#btnHamburger{
+  display:none; width:34px; height:34px;
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:8px; cursor:pointer; flex-direction:column;
+  align-items:center; justify-content:center; gap:5px;
+  flex-shrink:0;
+}
+#btnHamburger span{
+  display:block; width:16px; height:2px;
+  background:var(--text2); border-radius:1px; transition:all .2s;
+}
+@media(max-width:768px){
+  #btnHamburger{display:flex}
+  #sidebar{
+    position:absolute; right:0; top:0; bottom:0; z-index:40;
+    transform:translateX(100%); transition:transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:-4px 0 24px rgba(0,0,0,.4);
+  }
+  #sidebar.mobile-open{transform:translateX(0)}
+  .brand-title{font-size:13px}
+  .search-box{width:130px}
+  .btn-sm{padding:4px 8px;font-size:11px}
+}
+
+/* ── KEYBOARD SHORTCUTS MODAL ────────────────────────────── */
+#shortcutsOverlay .modal{width:500px}
+.shortcut-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.shortcut-row{display:flex;align-items:center;gap:10px;padding:7px 10px;background:var(--surface2);border-radius:6px}
+.shortcut-key{font-family:monospace;background:var(--surface3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:11px;color:var(--gold2);white-space:nowrap;flex-shrink:0}
+.shortcut-desc{font-size:12px;color:var(--text2)}
+
+/* ── PASSWORD CHANGE MODAL ───────────────────────────────── */
+#pwdOverlay .modal{width:380px}
+
+/* ── ACTIVITY LOG MODAL ──────────────────────────────────── */
+#logOverlay .modal{width:520px}
+.log-entry{padding:8px 10px;border-bottom:1px solid var(--border);font-size:12px;display:flex;align-items:flex-start;gap:8px}
+.log-entry:last-child{border-bottom:none}
+.log-time{color:var(--text3);font-size:10px;flex-shrink:0;margin-top:2px;min-width:80px}
+.log-icon{flex-shrink:0}
+.log-msg{color:var(--text2);flex:1;line-height:1.5}
+
+/* ── UNDO/REDO BUTTONS ───────────────────────────────────── */
+.ctrl-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* ── GEN FILTER BAR ──────────────────────────────────────── */
+#genFilterBar{
+  display:none; padding:6px 12px; background:var(--surface2);
+  border-bottom:1px solid var(--border); gap:6px; flex-wrap:wrap;
+  align-items:center; flex-shrink:0; font-size:11px;
+}
+#genFilterBar.show{display:flex}
+.gen-filter-chip{
+  padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600;
+  cursor:pointer; border:1px solid; transition:opacity .15s;
+}
+.gen-filter-chip.hidden-gen{opacity:.35}
+
+/* ── FOCUS MODE indicator ────────────────────────────────── */
+#focusBanner{
+  display:none; position:absolute; top:14px; left:50%;
+  transform:translateX(-50%);
+  background:rgba(59,130,246,.15); border:1px solid rgba(59,130,246,.4);
+  border-radius:8px; padding:6px 14px; font-size:12px; color:var(--blue2);
+  z-index:20; gap:8px; align-items:center; white-space:nowrap;
+}
+#focusBanner.show{display:flex}
+
+/* ── COMPACT VIEW ────────────────────────────────────────── */
+body.compact-view [data-id] rect:first-of-type{rx:4}
+
+/* ── VIEWER MODE — no select, no copy, no editing hints ──── */
+body.viewer-mode *{
+  user-select:none!important;
+  -webkit-user-select:none!important;
+}
+body.viewer-mode .viewer-hidden{display:none!important}
+body.viewer-mode #roleBadge{
+  background:rgba(99,102,241,.15);
+  color:#818cf8;
+  border:1px solid rgba(99,102,241,.3);
+}
+
+/* ── PRINT ───────────────────────────── */
+@media print{
+  #header,#sidebar,#treeControls,#minimap,#birthdayBanner,#genFilterBar{display:none!important}
+  #treeArea{overflow:visible!important}
+  body{overflow:visible!important}
+}
+
+/* ── RESPONSIVE ──────────────────────── */
+@media(max-width:768px){
+  #sidebar{position:absolute;right:0;top:0;bottom:0;z-index:40;transform:translateX(100%);transition:transform .3s;width:280px!important}
+  #sidebar.mobile-open{transform:translateX(0)}
+  .brand-title{font-size:13px}
+  .search-box{width:110px}
+  /* Collapse less-important header buttons on mobile */
+  #btnGenFilter,#btnCompact{display:none}
+  /* Touch-friendly button minimum size */
+  button,a.btn{min-height:36px;min-width:36px}
+  .fab{width:52px!important;height:52px!important;font-size:22px!important;bottom:80px!important;right:12px!important}
+  /* Make modals full-width on small screens */
+  .overlay .modal{width:95vw!important;max-width:95vw!important;max-height:90vh;overflow-y:auto}
+  /* Sidebar overlay when open */
+  #sidebar.mobile-open::before{
+    content:''; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:-1;
+  }
+  /* Form rows stack on mobile */
+  .form-row{flex-direction:column!important;gap:0}
+  /* Zoom controls larger */
+  #treeControls button{min-width:38px;min-height:38px;font-size:16px}
+}
+
+/* Photo upload area */
+.photo-upload{
+  border:2px dashed var(--border2);
+  border-radius:8px;
+  padding:16px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .2s;
+  color:var(--text3);
+  font-size:12px;
+}
+.photo-upload:hover{border-color:var(--gold);color:var(--gold2)}
+
+/* Path indicator */
+.path-indicator{
+  position:absolute;
+  top:14px;left:14px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:8px 12px;
+  font-size:12px;
+  z-index:20;
+  display:none;
+  gap:4px;
+  align-items:center;
+  flex-wrap:wrap;
+  max-width:400px;
+}
+.path-indicator.show{display:flex}
+.path-indicator .pi-name{
+  color:var(--gold2);
+  display:flex;align-items:center;gap:3px;
+}
+.path-indicator .pi-arrow{color:var(--text3)}
+.path-close{cursor:pointer;color:var(--text3);margin-right:4px}
+.path-close:hover{color:var(--danger)}
+
+/* Floating add button */
+.fab{
+  position:absolute;
+  top:14px;right:14px;
+  width:40px;height:40px;
+  background:linear-gradient(135deg,var(--gold),#b8922f);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  cursor:pointer;
+  z-index:20;
+  box-shadow:0 4px 16px rgba(201,168,76,.35);
+  color:#0d0800;
+  font-weight:700;
+  transition:all .2s;
+  border:none;
+}
+.fab:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(201,168,76,.5)}
+
+/* ── LOGIN SCREEN ─────────────────────────────────────────── */
+#loginScreen{
+  position:fixed;inset:0;z-index:1000;
+  background:var(--bg);
+  display:none; /* shown after init check */
+  align-items:center;justify-content:center;
+  flex-direction:column;
+}
+.login-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,168,76,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.login-card{
+  position:relative;z-index:1;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:20px;padding:36px 40px;
+  width:360px;max-width:92vw;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+  animation:loginAppear .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes loginAppear{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo .login-icon{font-size:42px;margin-bottom:8px}
+.login-logo h1{font-family:'Amiri',serif;font-size:20px;font-weight:700;background:linear-gradient(90deg,var(--gold2),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.login-logo p{font-size:11px;color:var(--text3);margin-top:3px}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:12px;color:var(--text3);margin-bottom:5px;font-weight:500}
+.login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 12px;font-family:'Tajawal',sans-serif;font-size:14px;direction:rtl;transition:border-color .2s}
+.login-field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.login-btn{width:100%;padding:11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--gold),#b8922f);color:#0d0800;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;transition:all .2s}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.4)}
+.login-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.login-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger);border-radius:7px;padding:8px 12px;font-size:13px;margin-top:10px;text-align:center;display:none}
+.login-err.show{display:block;animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ── LOADING SPINNER (initial) ────────────────────────────── */
+#loadingScreen{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.loading-spinner{width:44px;height:44px;border:3px solid var(--surface3);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-size:13px;color:var(--text3)}
+
+/* ── USER BADGE (header) ──────────────────────────────────── */
+.user-pill{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:12px;color:var(--text2)}
+.role-badge{padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(201,168,76,.15);color:var(--gold2);border:1px solid rgba(201,168,76,.3)}
+
+/* ── SYNC INDICATOR ───────────────────────────────────────── */
+#syncDot{width:7px;height:7px;border-radius:50%;background:var(--success);flex-shrink:0;transition:background .3s}
+#syncDot.dirty{background:var(--warning);animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── IMPROVED PRINT CSS ───────────────────────────────────── */
+@media print {
+  #loginScreen,#loadingScreen { display:none !important }
+  body { overflow:visible !important }
+  .toolbar { display:none !important }
+}
+@page { size: A3 landscape; margin: 12mm; }
+</style>
+</head>
+<body>
+
+<!-- BIRTHDAY BANNER -->
+<div id="birthdayBanner">
+  <span>🎂</span>
+  <span id="birthdayText"></span>
+  <button onclick="document.getElementById('birthdayBanner').classList.remove('show')" style="margin-right:auto;background:none;border:none;color:var(--gold2);cursor:pointer;font-size:14px">✕</button>
+</div>
+
+<!-- GEN FILTER BAR -->
+<div id="genFilterBar">
+  <span style="color:var(--text3);font-size:11px">فلتر الأجيال:</span>
+  <div id="genFilterChips"></div>
+  <button class="btn btn-ghost btn-sm" onclick="clearGenFilter()" style="margin-right:auto">إعادة تعيين</button>
+</div>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div style="font-size:44px">🌳</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-txt">جاري التحميل...</div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-bg"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-icon">🌳</div>
+      <h1>شجرة عائلة المجاحيد سواعد</h1>
+      <p>سوريا • فلسطين • الأردن</p>
+    </div>
+    <div class="login-field">
+      <label>اسم المستخدم</label>
+      <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPass" placeholder="أدخل كلمة المرور" autocomplete="current-password">
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">🔐 دخول</button>
+    <div class="login-err" id="loginError"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div id="header" style="display:none">
+  <div class="header-brand">
+    <div class="brand-icon">🌳</div>
+    <div>
+      <div class="brand-title">شجرة عائلة المجاحيد سواعد</div>
+      <div class="brand-sub">سوريا • فلسطين • الأردن</div>
+    </div>
+  </div>
+
+  <div class="header-center">
+    <div class="search-box" id="searchBox">
+      <input type="text" id="searchInput" placeholder="ابحث بالاسم..." autocomplete="off" oninput="handleSearch(this.value)">
+      <div class="search-results" id="searchResults" style="display:none"></div>
+    </div>
+    <span class="unsaved-badge" id="unsavedBadge">⚠ تغييرات غير محفوظة</span>
+  </div>
+
+  <div class="header-right">
+    <!-- Sync status dot -->
+    <div title="حالة المزامنة" style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3)">
+      <div id="syncDot"></div>
+      <span id="syncLabel">محفوظ</span>
+    </div>
+    <!-- User info -->
+    <div class="user-pill" id="userPill" title="تغيير كلمة المرور" style="cursor:pointer">
+      <span id="userLabel"></span>
+      <span class="role-badge" id="roleBadge"></span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="centerTree()" title="توسيط (Home)">⌂</button>
+    <button class="btn btn-ghost btn-sm viewer-hidden" id="btnUndo" onclick="undo()" title="تراجع (Ctrl+Z)" disabled>↩</button>
+    <button class="btn btn-ghost btn-sm viewer-hidden" id="btnRedo" onclick="redo()" title="إعادة (Ctrl+Y)" disabled>↪</button>
+    <button class="btn btn-ghost btn-sm" onclick="toggleTheme()" title="تبديل الثيم" id="btnTheme">☀</button>
+    <button class="btn btn-ghost btn-sm viewer-hidden" onclick="toggleCompact()" title="عرض مضغوط" id="btnCompact">⊡</button>
+    <button class="btn btn-ghost btn-sm viewer-hidden" onclick="toggleGenFilter()" title="فلتر الأجيال">🎯</button>
+    <button class="btn btn-ghost btn-sm viewer-hidden" id="btnImport" onclick="openImport()">📂</button>
+    <button class="btn btn-ghost btn-sm viewer-hidden" id="btnPrint" onclick="printTree()">🖨</button>
+    <button class="btn btn-gold btn-sm viewer-hidden" id="btnExport" onclick="exportData()">💾</button>
+    <button class="btn btn-ghost btn-sm viewer-hidden" onclick="openLog()" title="سجل النشاط">📋</button>
+    <button class="btn btn-ghost btn-sm" onclick="openShortcuts()" title="مساعدة (?)">❓</button>
+    <button class="btn btn-ghost btn-sm" id="btnLogout" onclick="doLogout()" title="تسجيل الخروج">🚪</button>
+    <input type="file" id="importFile" accept=".json,.ged" style="display:none" onchange="handleImportAuto(event)">
+    <button id="btnHamburger" onclick="toggleSidebar()" title="القائمة الجانبية">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+
+  <!-- TREE AREA -->
+  <div id="treeArea">
+    <svg id="treeSvg">
+      <defs>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glow-soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="1.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#2e3f5c"/>
+        </marker>
+      </defs>
+      <g id="treeRoot"></g>
+    </svg>
+
+    <!-- FAB -->
+    <button class="fab" onclick="openAddModal()" title="إضافة شخص">+</button>
+
+    <!-- Controls -->
+    <div id="treeControls">
+      <button class="ctrl-btn" onclick="zoom(-0.2)" title="تصغير (−)">−</button>
+      <span class="zoom-level" id="zoomLabel">100%</span>
+      <button class="ctrl-btn" onclick="zoom(0.2)" title="تكبير (+)">+</button>
+      <button class="ctrl-btn" onclick="centerTree()" title="توسيط (Home)">⊙</button>
+      <button class="ctrl-btn" onclick="fitTree()" title="ملاءمة (Ctrl+0)">⊞</button>
+      <button class="ctrl-btn" onclick="toggleFocusMode()" id="btnFocus" title="وضع التركيز">🔍</button>
+      <button class="ctrl-btn" id="toggleMinimap" onclick="toggleMinimap()" title="خريطة مصغرة">🗺</button>
+    </div>
+    <!-- Focus mode banner -->
+    <div id="focusBanner">
+      🔍 وضع التركيز — <span id="focusName"></span>
+      <button onclick="exitFocusMode()" style="background:none;border:none;color:var(--blue2);cursor:pointer;font-size:14px;padding:0 0 0 8px">✕ خروج</button>
+    </div>
+
+    <!-- Minimap -->
+    <div id="minimap">
+      <svg id="minimapSvg">
+        <g id="minimapContent"></g>
+        <rect id="minimapViewport" x="0" y="0" width="40" height="25" rx="2" fill="rgba(201,168,76,.15)" stroke="var(--gold)" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- Path indicator -->
+    <div class="path-indicator" id="pathIndicator">
+      <span class="path-close" onclick="clearPath()">✕</span>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip"></div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-tabs">
+      <button class="tab-btn active" data-tab="details" onclick="switchTab('details')">👤 التفاصيل</button>
+      <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')">📊 إحصائيات</button>
+      <button class="tab-btn" data-tab="search" onclick="switchTab('search')">🔍 بحث</button>
+    </div>
+
+    <!-- Details tab -->
+    <div class="tab-panel active" id="tab-details">
+      <div class="sidebar-body" id="sidebarDetails">
+        <div class="empty-state">
+          <div class="icon">👆</div>
+          <p>انقر على أي شخص في الشجرة لعرض تفاصيله، أو انقر بزر الماوس الأيمن لمزيد من الخيارات</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats tab -->
+    <div class="tab-panel" id="tab-stats">
+      <div class="sidebar-body" id="sidebarStats"></div>
+    </div>
+
+    <!-- Search tab -->
+    <div class="tab-panel" id="tab-search">
+      <div style="padding:12px;border-bottom:1px solid var(--border)">
+        <input type="text" id="advSearch" placeholder="ابحث بالاسم أو الملاحظات..." 
+          style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);padding:8px 12px;font-family:'Tajawal',sans-serif;font-size:13px;direction:rtl"
+          oninput="advancedSearch(this.value)">
+      </div>
+      <div class="sidebar-body" id="sidebarSearch">
+        <div class="empty-state">
+          <div class="icon">🔍</div>
+          <p>اكتب للبحث في كل الأشخاص</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Context Menu -->
+<div id="ctxMenu">
+  <div class="ctx-item" onclick="ctxAddChild()">➕ إضافة ابن</div>
+  <div class="ctx-item" onclick="ctxEdit()">✏️ تعديل البيانات</div>
+  <div class="ctx-item" onclick="ctxShowPath()">🗺 مسار للجذر</div>
+  <div class="ctx-item" onclick="ctxHighlightFamily()">✨ إبراز العائلة</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item danger" onclick="ctxDelete()">🗑️ حذف</div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="editTitle">إضافة شخص</h2>
+      <button class="modal-close" onclick="closeEdit()">✕</button>
+    </div>
+    <div class="form-group">
+      <label>الاسم *</label>
+      <input type="text" id="fName" placeholder="أدخل الاسم الكامل...">
+    </div>
+    <div class="form-group">
+      <label>اللقب / الكنية</label>
+      <input type="text" id="fNickname" placeholder="مثال: أبو محمد...">
+    </div>
+    <div class="form-group" id="parentGroup">
+      <label>الأب</label>
+      <select id="fParent">
+        <option value="">— جذر الشجرة —</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>تاريخ الميلاد</label>
+        <input type="date" id="fBirthDate" placeholder="YYYY-MM-DD">
+      </div>
+      <div class="form-group">
+        <label>سنة الوفاة</label>
+        <input type="number" id="fDeathYear" placeholder="إن توفي" min="1800" max="2099">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>المدينة</label>
+        <input type="text" id="fCity" placeholder="مثال: دمشق">
+      </div>
+      <div class="form-group">
+        <label>الدولة</label>
+        <input type="text" id="fCountry" placeholder="مثال: سوريا">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>ملاحظات</label>
+      <textarea id="fNotes" placeholder="أي معلومات إضافية..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeEdit()">إلغاء</button>
+      <button class="btn btn-gold" onclick="saveEdit()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="overlay" id="deleteOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>🗑️ تأكيد الحذف</h2>
+      <button class="modal-close" onclick="closeDelete()">✕</button>
+    </div>
+    <p style="color:var(--text2);font-size:14px;line-height:1.8" id="deleteMsg"></p>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeDelete()">إلغاء</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">نعم، احذف</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="overlay" id="photoOverlay">
+  <div class="modal" style="width:420px">
+    <div class="modal-header">
+      <h2 id="photoModalTitle">🖼 صورة الشخص</h2>
+      <button class="modal-close" onclick="closePhoto()">✕</button>
+    </div>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('photoFileInput').click()"
+      ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event)">
+      <div class="dz-icon">📷</div>
+      <p>انقر لاختيار صورة أو اسحبها هنا</p>
+      <p style="font-size:11px;margin-top:4px;color:var(--text3)">JPG, PNG, WEBP — حد أقصى 3MB</p>
+    </div>
+    <input type="file" id="photoFileInput" accept="image/*" style="display:none" onchange="handlePhotoFile(event)">
+    <img id="photoPreview" alt="معاينة">
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePhoto()">إلغاء</button>
+      <button class="btn btn-danger btn-sm" id="btnRemovePhoto" onclick="removePhoto()" style="display:none">🗑 إزالة</button>
+      <button class="btn btn-gold" onclick="savePhoto()">✅ حفظ الصورة</button>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD CHANGE MODAL -->
+<div class="overlay" id="pwdOverlay">
+  <div class="modal" style="width:380px">
+    <div class="modal-header">
+      <h2>🔑 تغيير كلمة المرور</h2>
+      <button class="modal-close" onclick="closePwd()">✕</button>
+    </div>
+    <div class="form-group">
+      <label>كلمة المرور الحالية</label>
+      <input type="password" id="pwdCurrent" placeholder="أدخل كلمة المرور الحالية">
+    </div>
+    <div class="form-group">
+      <label>كلمة المرور الجديدة</label>
+      <input type="password" id="pwdNew" placeholder="8 أحرف على الأقل">
+    </div>
+    <div class="form-group">
+      <label>تأكيد كلمة المرور الجديدة</label>
+      <input type="password" id="pwdConfirm" placeholder="أعد إدخال كلمة المرور">
+    </div>
+    <div id="pwdError" style="color:var(--danger);font-size:12px;display:none"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePwd()">إلغاء</button>
+      <button class="btn btn-gold" onclick="savePassword()">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVITY LOG MODAL -->
+<div class="overlay" id="logOverlay">
+  <div class="modal" style="width:520px">
+    <div class="modal-header">
+      <h2>📋 سجل النشاط</h2>
+      <button class="modal-close" onclick="closeLog()">✕</button>
+    </div>
+    <div id="logList" style="max-height:400px;overflow-y:auto"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeLog()">إغلاق</button>
+      <button class="btn btn-danger btn-sm" onclick="clearLog()">🗑 مسح السجل</button>
+    </div>
+  </div>
+</div>
+
+<!-- KEYBOARD SHORTCUTS MODAL -->
+<div class="overlay" id="shortcutsOverlay">
+  <div class="modal" style="width:500px">
+    <div class="modal-header">
+      <h2>⌨️ اختصارات لوحة المفاتيح</h2>
+      <button class="modal-close" onclick="closeShortcuts()">✕</button>
+    </div>
+    <div class="shortcut-grid">
+      <div class="shortcut-row"><span class="shortcut-key">Ctrl+F</span><span class="shortcut-desc">بحث سريع</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Ctrl+Z</span><span class="shortcut-desc">تراجع</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Ctrl+Y</span><span class="shortcut-desc">إعادة</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Ctrl+0</span><span class="shortcut-desc">ملاءمة الشجرة</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">+</span><span class="shortcut-desc">تكبير</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">−</span><span class="shortcut-desc">تصغير</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Esc</span><span class="shortcut-desc">إغلاق / إلغاء</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Home</span><span class="shortcut-desc">توسيط الشجرة</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">N</span><span class="shortcut-desc">إضافة شخص جديد</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">T</span><span class="shortcut-desc">تبديل الثيم</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">F</span><span class="shortcut-desc">وضع التركيز</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">?</span><span class="shortcut-desc">هذه النافذة</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">↑↓ Enter</span><span class="shortcut-desc">تنقل في نتائج البحث</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Double-clic</span><span class="shortcut-desc">تركيز على العائلة</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeShortcuts()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  AUTH — PBKDF2 hashing via Web Crypto API
+//  Passwords are NEVER stored in plaintext.
+//  Hashes are generated on first run and stored in localStorage.
+// ═══════════════════════════════════════════════════════════
+const CRED_KEY    = 'ft_credentials_v2';
+const SESSION_KEY = 'ft_session_v2';
+const LOCKOUT_KEY = 'ft_lockout';
+const DATA_KEY    = 'ft_family_data';
+
+// Default accounts — plain-text only used on first run to generate hashes,
+// then immediately discarded. Change these before deploying.
+const DEFAULT_ACCOUNTS = [
+  { username: 'admin',  password: 'family2024!', role: 'admin'  },
+  { username: 'viewer', password: 'view2024',    role: 'viewer' },
+];
+
+let currentUser  = null;
+let _credentials = {};
+
+// ── Crypto helpers ────────────────────────────────────────
+function randomHex(bytes) {
+  return Array.from(crypto.getRandomValues(new Uint8Array(bytes)))
+    .map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function pbkdf2Hash(password, saltHex) {
+  const enc = new TextEncoder();
+  const keyMat = await crypto.subtle.importKey(
+    'raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: enc.encode(saltHex), iterations: 150000, hash: 'SHA-256' },
+    keyMat, 256
+  );
+  return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── Credentials init ──────────────────────────────────────
+async function initCredentials() {
+  const stored = localStorage.getItem(CRED_KEY);
+  if (stored) {
+    try { return JSON.parse(stored); } catch(e) {}
+  }
+  // First run: hash all default passwords
+  const creds = {};
+  for (const acc of DEFAULT_ACCOUNTS) {
+    const salt = randomHex(16);
+    const hash = await pbkdf2Hash(acc.password, salt);
+    creds[acc.username] = { hash, salt, role: acc.role };
+  }
+  localStorage.setItem(CRED_KEY, JSON.stringify(creds));
+  return creds;
+}
+
+// ── Brute-force protection (5 attempts → 15 min lockout) ──
+// Dual layer: in-memory counter (cannot be cleared via DevTools) +
+// localStorage for persistence across page refresh.
+let _failCount = 0;       // in-memory — survives tab refresh via localStorage too
+let _lockedUntil = 0;     // in-memory timestamp
+
+function _syncLockoutFromStorage(){
+  try {
+    const d = JSON.parse(localStorage.getItem(LOCKOUT_KEY) || '{"count":0,"until":0}');
+    // Only read in if localStorage value is more restrictive
+    if (d.until > _lockedUntil) _lockedUntil = d.until;
+    if (d.count  > _failCount)  _failCount   = d.count;
+  } catch(e){}
+}
+function getLockout() {
+  _syncLockoutFromStorage();
+  return { count: _failCount, until: _lockedUntil };
+}
+function recordFail() {
+  _failCount++;
+  if (_failCount >= 5) {
+    _lockedUntil = Date.now() + 15*60*1000;
+    _failCount = 0;
+  }
+  // Persist so refresh doesn't reset it; but in-memory value is authoritative
+  try { localStorage.setItem(LOCKOUT_KEY, JSON.stringify({ count: _failCount, until: _lockedUntil })); } catch(e){}
+}
+function clearLockout()  {
+  _failCount = 0; _lockedUntil = 0;
+  try { localStorage.removeItem(LOCKOUT_KEY); } catch(e){}
+}
+function lockedUntil()   {
+  _syncLockoutFromStorage();
+  return _lockedUntil > Date.now() ? _lockedUntil : 0;
+}
+
+// ── Login flow ────────────────────────────────────────────
+async function doLogin() {
+  const btn = document.getElementById('loginBtn');
+  const lu  = lockedUntil();
+  if (lu) {
+    const mins = Math.ceil((lu - Date.now()) / 60000);
+    showLoginError(`محظور مؤقتاً — حاول بعد ${mins} دقيقة`);
+    return;
+  }
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  if (!username || !password) { showLoginError('أدخل الاسم وكلمة المرور'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ جاري التحقق...';
+
+  try {
+    const cred = _credentials[username];
+    if (!cred) { throw new Error('not found'); }
+    const hash = await pbkdf2Hash(password, cred.salt);
+    if (hash !== cred.hash) { throw new Error('wrong password'); }
+    clearLockout();
+    currentUser = { username, role: cred.role };
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+    startSession();
+  } catch {
+    recordFail();
+    const remaining = 5 - (getLockout().count || 0);
+    showLoginError(remaining > 0
+      ? `بيانات غير صحيحة — ${remaining} محاولة متبقية`
+      : 'محظور مؤقتاً لمدة 15 دقيقة');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔐 دخول';
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('loginError');
+  el.textContent = msg;
+  el.classList.add('show');
+  document.getElementById('loginPass').value = '';
+  setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+function doLogout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  // Remove viewer restrictions before clearing user
+  document.body.classList.remove('viewer-mode');
+  document.removeEventListener('copy',        _blockCopy);
+  document.removeEventListener('cut',         _blockCopy);
+  document.removeEventListener('contextmenu', _blockCtxMenu);
+  currentUser = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('header').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+function startSession() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('header').style.display = 'flex';
+  document.getElementById('app').style.display = 'flex';
+  // User pill
+  document.getElementById('userLabel').textContent = currentUser.username;
+  const isAdmin = currentUser.role === 'admin';
+  document.getElementById('roleBadge').textContent = isAdmin ? 'مسؤول' : 'مشاهد';
+  // Admin-only FAB/import
+  document.querySelector('.fab').style.display = isAdmin ? 'flex' : 'none';
+  // User-pill: admin can change password, viewer cannot
+  const pill = document.getElementById('userPill');
+  if(isAdmin){ pill.onclick = openPwd; pill.title = 'تغيير كلمة المرور'; }
+  else { pill.onclick = null; pill.style.cursor = 'default'; }
+  // Viewer mode: add class → CSS hides .viewer-hidden elements + disables selection
+  if(!isAdmin){
+    document.body.classList.add('viewer-mode');
+    // Block clipboard copy
+    document.addEventListener('copy',  _blockCopy);
+    document.addEventListener('cut',   _blockCopy);
+    document.addEventListener('contextmenu', _blockCtxMenu);
+  }
+  loadPhotos();
+  applyTheme();
+  resetSessionTimer();
+  loadFamilyData();
+  logActivity('login', `دخول المستخدم "${currentUser.username}" (${isAdmin?'مسؤول':'مشاهد'})`);
+}
+function _blockCopy(e){ e.preventDefault(); e.stopPropagation(); return false; }
+function _blockCtxMenu(e){ e.preventDefault(); return false; }
+
+// ── Auth bootstrap ────────────────────────────────────────
+(async function bootstrap() {
+  _credentials = await initCredentials();
+  // Keyboard shortcuts for login form
+  ['loginUser','loginPass'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+  });
+  // Restore session if already logged in
+  // SECURITY: role is ALWAYS read from _credentials, never from sessionStorage.
+  // This prevents privilege escalation by editing sessionStorage in DevTools.
+  const saved = sessionStorage.getItem(SESSION_KEY);
+  if (saved) {
+    try {
+      const u = JSON.parse(saved);
+      const cred = _credentials[u.username];
+      if (cred && typeof u.username === 'string') {
+        currentUser = { username: u.username, role: cred.role }; // role from server-of-truth
+        startSession();
+        return;
+      }
+    } catch(e) {}
+    sessionStorage.removeItem(SESSION_KEY); // corrupt/tampered → wipe it
+  }
+  // Show login
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display  = 'flex';
+  setTimeout(() => document.getElementById('loginUser').focus(), 100);
+})();
+
+// ═══════════════════════════════════════════════════════════
+//  PERSISTENCE — localStorage as primary store
+//  Data survives page refresh without needing a backend.
+// ═══════════════════════════════════════════════════════════
+function persistLocally() {
+  try {
+    localStorage.setItem(DATA_KEY, JSON.stringify(familyData));
+    localStorage.setItem(DATA_KEY + '_ts', Date.now());
+    setSyncDot(false);
+  } catch(e) {
+    console.warn('localStorage full?', e);
+  }
+}
+
+function loadFamilyData() {
+  const local = localStorage.getItem(DATA_KEY);
+  if (local) {
+    try {
+      const parsed = JSON.parse(local);
+      // Basic sanity check: must have id and name
+      if (parsed && parsed.id && parsed.name) {
+        familyData = parsed;
+        renderTree();
+        setTimeout(() => { fitTree(); checkBirthdays(); }, 100);
+        markSaved(); // data is already persisted — no unsaved changes
+        toast('✅ تم تحميل البيانات المحفوظة', 'success');
+        return;
+      }
+    } catch(e) {
+      console.warn('[FT] Corrupted localStorage data, falling back to default', e);
+    }
+  }
+  // Fallback: use hardcoded data embedded in the file
+  renderTree();
+  setTimeout(() => { fitTree(); checkBirthdays(); }, 100);
+  markSaved();
+}
+
+// ── Sync dot (visual indicator) ───────────────────────────
+function setSyncDot(dirty) {
+  const dot   = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  if (!dot) return;
+  if (dirty) { dot.classList.add('dirty');    label.textContent = 'غير محفوظ'; }
+  else       { dot.classList.remove('dirty'); label.textContent = 'محفوظ'; }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  REAL-TIME SYNC — BroadcastChannel (multi-tab updates)
+//  When data changes in one browser tab, all other open
+//  tabs receive the update and re-render instantly.
+// ═══════════════════════════════════════════════════════════
+let _syncChannel = null;
+try { _syncChannel = new BroadcastChannel('ft_tree_sync'); } catch(e) {}
+
+if (_syncChannel) {
+  _syncChannel.onmessage = event => {
+    const msg = event.data;
+    // Validate message structure before trusting it
+    if (!msg || typeof msg !== 'object') return;
+    if (msg.type !== 'TREE_UPDATE') return;
+    // Payload must look like a valid tree root (has id and name strings)
+    const p = msg.payload;
+    if (!p || typeof p !== 'object' || typeof p.id !== 'string' || typeof p.name !== 'string') return;
+    // Only admin sessions accept tree updates from other tabs
+    // (viewer tabs are read-only — they should not modify shared state)
+    if (currentUser?.role !== 'admin') return;
+    familyData = p;
+    renderTree();
+    if (selectedId) showPersonSidebar(selectedId);
+    setSyncDot(false);
+    toast('🔄 تحديث من نافذة أخرى', 'success');
+  };
+}
+
+function broadcastUpdate() {
+  if (_syncChannel) {
+    _syncChannel.postMessage({ type: 'TREE_UPDATE', payload: familyData });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════════
+let familyData = {
+  id:'taha',name:'طه',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+    {id:'mustafa',name:'مصطفى',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+      {id:'muhammad1',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+        {id:'ubaid',name:'عبيد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+          {id:'khabasa',name:'خبصة',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+        ]},
+        {id:'khalid1',name:'خالد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+          {id:'mahmoud1',name:'محمود',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+          {id:'muhammad2',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+          {id:'hamad',name:'حمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+          {id:'hussain1',name:'حسين',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+        ]}
+      ]},
+      {id:'hasan1',name:'حسن',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+        {id:'abdallah1',name:'عبد الله',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+          {id:'awwad1',name:'عواد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+            {id:'said1',name:'⭐ سعيد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+              {id:'haytham',name:'هيثم',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+                {id:'said2',name:'سعيد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+              ]},
+              {id:'muhammad3',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+                {id:'umar',name:'عمر',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+              ]},
+              {id:'ahmad1',name:'أحمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'amjad',name:'أمجد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+                {id:'adam',name:'آدم',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+              ]}
+            ]},
+            {id:'abdallah2',name:'عبد الله',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+              {id:'awwad2',name:'عواد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'fadi',name:'فادي',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'husam',name:'حسام',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'imad',name:'عماد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'muhammad4',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'basil1',name:'باسل',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+            ]},
+            {id:'karim1',name:'كريم',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+              {id:'maher',name:'ماهر',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'samer',name:'سامر',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'ammar',name:'عمار',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'zaher',name:'زاهر',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+            ]}
+          ]}
+        ]},
+        {id:'ahmad2',name:'أحمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+        {id:'mahmoud2',name:'محمود',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+        {id:'muhammad5',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+          {id:'musa',name:'موسى',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+            {id:'fayiz',name:'فايز',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'khalid2',name:'خالد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'mahmoud3',name:'محمود',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'ali1',name:'علي',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'muhammad6',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'ismail',name:'إسماعيل',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'ibrahim',name:'إبراهيم',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'khalil1',name:'خليل',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'yusuf',name:'يوسف',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+          ]},
+          {id:'hasan2',name:'حسن',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+            {id:'muhammad7',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+              {id:'wasim',name:'وسيم',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'iyad',name:'إياد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'basil2',name:'باسل',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+            ]},
+            {id:'hasan3',name:'حسن',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+              {id:'shawqi',name:'شوقي',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+            ]}
+          ]}
+        ]},
+        {id:'karim2',name:'كريم',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+      ]},
+      {id:'khalil2',name:'خليل',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+        {id:'salih1',name:'صالح',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+          {id:'ahmad3',name:'أحمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+            {id:'said3',name:'سعيد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+              {id:'adnan1',name:'عدنان',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+            ]},
+            {id:'muhammad8',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'khalil3',name:'خليل',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+              {id:'ahmad4',name:'أحمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'muhammad9',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'zayn',name:'زين',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'abd',name:'عبد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+            ]}
+          ]},
+          {id:'hussain2',name:'حسين',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+            {id:'atif',name:'عاطف',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'atiyya',name:'عطية',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'hatim',name:'حاتم',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'ahmad5',name:'أحمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+          ]},
+          {id:'hasan4',name:'حسن',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+            {id:'ahmad6',name:'أحمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'salih2',name:'صالح',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+              {id:'adil',name:'عادل',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'adnan2',name:'عدنان',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'hasan5',name:'حسن',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+              {id:'khalid3',name:'خالد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+            ]}
+          ]}
+        ]},
+        {id:'ali2',name:'علي',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+          {id:'muhammad10',name:'محمد',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+            {id:'ali3',name:'علي',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'sultan',name:'سلطان',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'hussain3',name:'حسين',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'hasan6',name:'حسن',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'abdallah3',name:'عبد الله',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'isa',name:'عيسى',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'khalil4',name:'خليل',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]},
+            {id:'ghazi',name:'غازي',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+          ]}
+        ]}
+      ]},
+      {id:'ali4',name:'علي',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+        {id:'isa2',name:'عيسى',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[
+          {id:'raja',name:'رجا',nickname:'',birthYear:'',deathYear:'',location:'',notes:'',children:[]}
+        ]}
+      ]}
+    ]}
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let selectedId = null;
+let ctxTargetId = null;
+let editMode = 'add'; // 'add'|'addChild'|'edit'
+let editParentId = null;
+let editNodeId = null;
+let deletingId = null;
+let hasUnsaved = false;
+let highlightedIds = new Set();
+let pathIds = [];
+
+// D3 zoom transform state
+let currentTransform = d3.zoomIdentity;
+let svgW = 0, svgH = 0;
+let treeW = 0, treeH = 0;
+
+// Flat maps
+let parentMap = {};
+let genMap    = {};
+let allNodes  = [];
+let nodePos   = {};
+let nodeMap   = {};   // id → node reference for O(1) find()
+
+// ═══════════════════════════════════════════════════════════
+//  COLORS
+// ═══════════════════════════════════════════════════════════
+const GEN_COLORS = [
+  null,
+  {stroke:'#a855f7',fill:'#1e0f3a',text:'#e9d5ff'},
+  {stroke:'#06b6d4',fill:'#042330',text:'#cffafe'},
+  {stroke:'#f59e0b',fill:'#2d1a00',text:'#fef3c7'},
+  {stroke:'#3b82f6',fill:'#0c1e40',text:'#dbeafe'},
+  {stroke:'#10b981',fill:'#032817',text:'#d1fae5'},
+  {stroke:'#f43f5e',fill:'#300a14',text:'#ffe4e6'},
+  {stroke:'#8b5cf6',fill:'#1a0f35',text:'#ede9fe'},
+  {stroke:'#14b8a6',fill:'#031e1c',text:'#ccfbf1'},
+  {stroke:'#fb923c',fill:'#2d1200',text:'#ffedd5'},
+];
+
+function gc(g){ return GEN_COLORS[Math.min(g,9)] || GEN_COLORS[1]; }
+const GEN_LABELS=['','الجيل الأول','الجيل الثاني','الجيل الثالث','الجيل الرابع','الجيل الخامس','الجيل السادس','الجيل السابع','الجيل الثامن','الجيل التاسع'];
+
+// ═══════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════
+
+// XSS-safe HTML escaping — MUST wrap all user-supplied strings
+// before inserting into innerHTML.
+function _formatDate(dateStr){
+  if(!dateStr) return '';
+  try {
+    const [y,m,d] = dateStr.split('-');
+    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    return `${parseInt(d,10)} ${months[parseInt(m,10)-1]} ${y}`;
+  } catch(e){ return dateStr; }
+}
+function esc(str){
+  if(str==null) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// Safe id attribute — only allow alphanumeric + underscore
+function escId(id){
+  return String(id||'').replace(/[^a-zA-Z0-9_\-]/g,'');
+}
+
+function uid(){
+  // Use crypto.getRandomValues — cryptographically secure, collision-resistant
+  const bytes = new Uint8Array(9);
+  crypto.getRandomValues(bytes);
+  return 'n_' + Array.from(bytes, b => b.toString(36).padStart(2,'0')).join('').slice(0, 12);
+}
+
+function find(id, node=familyData){
+  // O(1) fast path after rebuildMaps(); fallback to recursive search during init
+  if(nodeMap[id]) return nodeMap[id];
+  if(!node) return null;
+  if(node.id===id) return node;
+  for(const c of (node.children||[])){
+    const r=find(id,c); if(r) return r;
+  }
+  return null;
+}
+
+function remove(id, node=familyData){
+  if(!node.children) return false;
+  const i=node.children.findIndex(c=>c.id===id);
+  if(i!==-1){node.children.splice(i,1);return true;}
+  for(const c of node.children){ if(remove(id,c)) return true; }
+  return false;
+}
+
+function buildMaps(node, parent, gen){
+  parentMap[node.id]=parent?parent.id:null;
+  genMap[node.id]=gen;
+  allNodes.push(node);
+  (node.children||[]).forEach(c=>buildMaps(c,node,gen+1));
+}
+
+function countDesc(node){
+  let n=0;
+  (node.children||[]).forEach(c=>{n+=1+countDesc(c);});
+  return n;
+}
+
+function ancestors(id){
+  const path=[];
+  let cur=id;
+  while(cur){
+    path.unshift(cur);
+    cur=parentMap[cur];
+  }
+  return path;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LAYOUT (Reingold-Tilford style)
+// ═══════════════════════════════════════════════════════════
+const NW=80, NH=32, HGAP=14, VGAP=60;
+
+function measureW(node){
+  if(!node.children||!node.children.length){node._w=NW;return NW;}
+  let total=node.children.reduce((s,c,i)=>s+measureW(c)+(i?HGAP:0),0);
+  node._w=Math.max(NW,total);
+  return node._w;
+}
+
+function placeNodes(node, x, y){
+  node._x=x+node._w/2-NW/2;
+  node._y=y;
+  nodePos[node.id]={x:node._x,y:node._y};
+  if(!node.children||!node.children.length) return;
+  let cx=x;
+  node.children.forEach(c=>{ placeNodes(c,cx,y+NH+VGAP); cx+=c._w+HGAP; });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════════
+function rebuildMaps(){
+  parentMap={}; genMap={}; allNodes=[]; nodePos={}; nodeMap={};
+  buildMaps(familyData,null,1);
+  measureW(familyData);
+  placeNodes(familyData,20,20);
+  // Build O(1) lookup map after allNodes is populated
+  allNodes.forEach(n => { nodeMap[n.id] = n; });
+  treeW=Math.max(...allNodes.map(n=>n._x+NW))+40;
+  treeH=Math.max(...allNodes.map(n=>n._y+NH))+40;
+}
+
+const svg = d3.select('#treeSvg');
+const root = d3.select('#treeRoot');
+
+const zoomBehavior = d3.zoom()
+  .scaleExtent([0.05,3])
+  .on('zoom',(event)=>{
+    currentTransform=event.transform;
+    root.attr('transform',event.transform);
+    document.getElementById('zoomLabel').textContent=Math.round(event.transform.k*100)+'%';
+    updateMinimap();
+  });
+
+svg.call(zoomBehavior).on('dblclick.zoom',null);
+
+// Right-click to deselect
+svg.on('contextmenu.tree',function(event){
+  const target=event.target.closest('[data-id]');
+  if(!target){ hideCtxMenu(); event.preventDefault(); return; }
+});
+
+// Click on empty space to deselect
+svg.on('click.deselect',function(event){
+  if(!event.target.closest('[data-id]')){
+    selectedId=null;
+    highlightedIds.clear();
+    pathIds=[];
+    d3.select('#pathIndicator').classed('show',false);
+    renderTree();
+  }
+});
+
+function renderTree(){
+  rebuildMaps();
+  root.selectAll('*').remove();
+
+  // ── Edges ─────────
+  const edgeGroup=root.append('g').attr('class','edges');
+  allNodes.forEach(node=>{
+    (node.children||[]).forEach(child=>{
+      const px=node._x+NW/2, py=node._y+NH;
+      const cx=child._x+NW/2, cy=child._y;
+      const my=(py+cy)/2;
+
+      const isPath=pathIds.includes(node.id)&&pathIds.includes(child.id);
+      const isHighlight=highlightedIds.has(node.id)&&highlightedIds.has(child.id);
+
+      edgeGroup.append('path')
+        .attr('d',`M${px},${py} C${px},${my} ${cx},${my} ${cx},${cy}`)
+        .attr('fill','none')
+        .attr('stroke', isPath?'var(--gold)': isHighlight?'rgba(59,130,246,.6)':'var(--border)')
+        .attr('stroke-width', isPath?2.5: isHighlight?1.8:1.2)
+        .attr('opacity', isPath?1: isHighlight?0.8:0.6)
+        .attr('stroke-dasharray', isPath?'none':'none');
+    });
+  });
+
+  // ── Nodes ─────────
+  const nodeGroup=root.append('g').attr('class','nodes');
+
+  allNodes.forEach(node=>{
+    const g=genMap[node.id]||1;
+    // Skip hidden generations
+    if(hiddenGens.has(g)) return;
+    // Focus mode: only show selected node + its ancestors/descendants
+    if(focusMode && focusNodeId){
+      const anc=[];let cur=focusNodeId;while(cur){anc.push(cur);cur=parentMap[cur];}
+      const desc=[];(function collect(n){desc.push(n.id);(n.children||[]).forEach(collect);})(find(focusNodeId)||{children:[]});
+      if(!anc.includes(node.id)&&!desc.includes(node.id)) return;
+    }
+    const col=gc(g);
+    const isSel=node.id===selectedId;
+    const isPath=pathIds.includes(node.id);
+    const isHL=highlightedIds.has(node.id);
+    const isDead=node.deathYear;
+    const photo=getPhoto(node.id);
+
+    const grp=nodeGroup.append('g')
+      .attr('data-id',node.id)
+      .attr('transform',`translate(${node._x},${node._y})`)
+      .style('cursor','pointer');
+
+    // Shadow/glow for selected
+    if(isSel){
+      grp.append('rect')
+        .attr('x',-3).attr('y',-3)
+        .attr('width',NW+6).attr('height',NH+6)
+        .attr('rx',10)
+        .attr('fill',col.stroke)
+        .attr('opacity',.25)
+        .attr('filter','url(#glow)');
+    }
+
+    // Main rect
+    const rect=grp.append('rect')
+      .attr('x',0).attr('y',0)
+      .attr('width',NW).attr('height',NH)
+      .attr('rx',7)
+      .attr('fill', isSel?col.stroke: isPath?'rgba(201,168,76,.2)': isHL?'rgba(59,130,246,.15)':col.fill)
+      .attr('stroke', isSel?col.text: isPath?'var(--gold)': isHL?'var(--blue)':col.stroke)
+      .attr('stroke-width', isSel?2: isPath?2:1)
+      .attr('opacity', (highlightedIds.size>0&&!isHL&&!isSel&&!isPath)?.35:1);
+
+    // Dead indicator — diagonal stripe overlay
+    if(isDead){
+      grp.append('rect')
+        .attr('x',0).attr('y',0)
+        .attr('width',NW).attr('height',NH)
+        .attr('rx',7)
+        .attr('fill','none')
+        .attr('stroke','rgba(148,163,184,.2)')
+        .attr('stroke-width',1)
+        .attr('stroke-dasharray','3,3');
+    }
+
+    // Children count badge
+    const childCount=(node.children||[]).length;
+    if(childCount>0){
+      grp.append('circle')
+        .attr('cx',NW-6).attr('cy',3)
+        .attr('r',7)
+        .attr('fill',col.stroke)
+        .attr('stroke',col.fill)
+        .attr('stroke-width',1.5);
+      grp.append('text')
+        .attr('x',NW-6).attr('y',3)
+        .attr('text-anchor','middle')
+        .attr('dominant-baseline','central')
+        .attr('fill','#fff')
+        .attr('font-size',8)
+        .attr('font-family','Tajawal,sans-serif')
+        .attr('font-weight','700')
+        .text(childCount);
+    }
+
+    // Name text
+    const displayName=node.name.replace('⭐ ','');
+    const hasStar=node.name.startsWith('⭐');
+    const maxChars=9;
+    const shortName=displayName.length>maxChars?displayName.substr(0,maxChars)+'…':displayName;
+
+    if(hasStar){
+      grp.append('text')
+        .attr('x',6).attr('y',NH/2)
+        .attr('dominant-baseline','central')
+        .attr('fill','var(--gold2)')
+        .attr('font-size',9)
+        .text('⭐');
+    }
+
+    grp.append('text')
+      .attr('x',NW/2+(hasStar?4:0)).attr('y',NH/2)
+      .attr('text-anchor','middle')
+      .attr('dominant-baseline','central')
+      .attr('fill', isSel?'#fff':col.text)
+      .attr('font-size',11)
+      .attr('font-family','Tajawal,sans-serif')
+      .attr('font-weight', isSel?'700':'500')
+      .text(shortName);
+
+    // Death year overlay
+    if(isDead){
+      grp.append('text')
+        .attr('x',NW/2).attr('y',NH-3)
+        .attr('text-anchor','middle')
+        .attr('fill','rgba(148,163,184,.5)')
+        .attr('font-size',7)
+        .attr('font-family','Tajawal,sans-serif')
+        .text('†'+node.deathYear);
+    }
+
+    // Photo avatar (top-right corner, 18px circle)
+    if(photo){
+      const clipId='clip-'+escId(node.id);
+      grp.append('clipPath').attr('id',clipId)
+        .append('circle').attr('cx',NW-12).attr('cy',12).attr('r',9);
+      grp.append('image')
+        .attr('href',photo)
+        .attr('x',NW-21).attr('y',3)
+        .attr('width',18).attr('height',18)
+        .attr('clip-path',`url(#${clipId})`);
+    }
+
+    // Interactions
+    grp.on('dblclick',function(event){
+      event.stopPropagation();
+      // Zoom to fit this node's family (node + children)
+      const children=node.children||[];
+      if(children.length===0){ scrollToNode(node.id); return; }
+      const xs=[node._x,...children.map(c=>c._x)];
+      const ys=[node._y,...children.map(c=>c._y)];
+      const minX=Math.min(...xs), maxX=Math.max(...xs)+NW;
+      const minY=Math.min(...ys), maxY=Math.max(...ys)+NH;
+      const area=document.getElementById('treeArea');
+      const pad=40;
+      const k=Math.min((area.clientWidth-pad*2)/(maxX-minX),(area.clientHeight-pad*2)/(maxY-minY),1.5);
+      const tx=area.clientWidth/2-(minX+(maxX-minX)/2)*k;
+      const ty=area.clientHeight/2-(minY+(maxY-minY)/2)*k;
+      svg.transition().duration(600).call(zoomBehavior.transform,d3.zoomIdentity.translate(tx,ty).scale(k));
+    });
+
+    grp.on('click',function(event){
+      event.stopPropagation();
+      selectedId=node.id;
+      if(highlightedIds.size>0&&!highlightedIds.has(node.id)){
+        highlightedIds.clear();
+        pathIds=[];
+        d3.select('#pathIndicator').classed('show',false);
+      }
+      renderTree();
+      showPersonSidebar(node.id);
+      switchTab('details');
+    });
+
+    grp.on('contextmenu',function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      ctxTargetId=node.id;
+      showCtxMenu(event.clientX,event.clientY);
+    });
+
+    grp.on('mouseenter',function(event){
+      showTooltip(event,node);
+    });
+    grp.on('mousemove',function(event){
+      moveTooltip(event);
+    });
+    grp.on('mouseleave',function(){
+      hideTooltip();
+    });
+  });
+
+  // Update SVG size
+  svg.attr('width',Math.max(treeW,800)).attr('height',Math.max(treeH,600));
+
+  updateMinimap();
+  renderStats();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ZOOM / CENTER
+// ═══════════════════════════════════════════════════════════
+function zoom(delta){
+  const area=document.getElementById('treeArea');
+  const cx=area.clientWidth/2, cy=area.clientHeight/2;
+  svg.call(zoomBehavior.scaleBy, 1+delta, [cx,cy]);
+}
+
+function centerTree(){
+  if(!familyData) return;
+  const area=document.getElementById('treeArea');
+  const node=find(familyData.id);
+  if(!node) return;
+  const tx=area.clientWidth/2-(node._x+NW/2);
+  const ty=60;
+  svg.transition().duration(600)
+    .call(zoomBehavior.transform, d3.zoomIdentity.translate(tx,ty).scale(1));
+}
+
+function fitTree(){
+  const area=document.getElementById('treeArea');
+  const pad=40;
+  const k=Math.min(
+    (area.clientWidth-pad*2)/treeW,
+    (area.clientHeight-pad*2)/treeH,
+    1
+  );
+  const tx=(area.clientWidth-treeW*k)/2;
+  const ty=(area.clientHeight-treeH*k)/2;
+  svg.transition().duration(700)
+    .call(zoomBehavior.transform, d3.zoomIdentity.translate(tx,ty).scale(k));
+}
+
+function scrollToNode(id){
+  const pos=nodePos[id];
+  if(!pos) return;
+  const area=document.getElementById('treeArea');
+  const k=Math.max(currentTransform.k,.8);
+  const tx=area.clientWidth/2-(pos.x+NW/2)*k;
+  const ty=area.clientHeight/2-(pos.y+NH/2)*k;
+  svg.transition().duration(600)
+    .call(zoomBehavior.transform, d3.zoomIdentity.translate(tx,ty).scale(k));
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MINIMAP
+// ═══════════════════════════════════════════════════════════
+function updateMinimap(){
+  const mm=document.getElementById('minimap');
+  if(mm.style.display==='none') return;
+  const mmW=160, mmH=100;
+  const scaleX=mmW/Math.max(treeW,1);
+  const scaleY=mmH/Math.max(treeH,1);
+  const sc=Math.min(scaleX,scaleY)*.9;
+
+  const mmContent=d3.select('#minimapContent');
+  mmContent.selectAll('*').remove();
+
+  allNodes.forEach(node=>{
+    const g=genMap[node.id]||1;
+    const col=gc(g);
+    mmContent.append('rect')
+      .attr('x',node._x*sc+4).attr('y',node._y*sc+4)
+      .attr('width',NW*sc).attr('height',NH*sc)
+      .attr('rx',2)
+      .attr('fill', node.id===selectedId?col.stroke:col.fill)
+      .attr('stroke',col.stroke)
+      .attr('stroke-width',.5)
+      .attr('opacity',.8);
+  });
+
+  // Viewport rect
+  const area=document.getElementById('treeArea');
+  const vx=-currentTransform.x/currentTransform.k*sc+4;
+  const vy=-currentTransform.y/currentTransform.k*sc+4;
+  const vw=area.clientWidth/currentTransform.k*sc;
+  const vh=area.clientHeight/currentTransform.k*sc;
+
+  d3.select('#minimapViewport')
+    .attr('x',Math.max(4,vx)).attr('y',Math.max(4,vy))
+    .attr('width',Math.min(vw,mmW-8)).attr('height',Math.min(vh,mmH-8));
+}
+
+function toggleMinimap(){
+  const mm=document.getElementById('minimap');
+  mm.style.display=mm.style.display==='none'?'block':'none';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TOOLTIP
+// ═══════════════════════════════════════════════════════════
+function showTooltip(event, node){
+  const tt=document.getElementById('tooltip');
+  const g=genMap[node.id]||1;
+  const col=gc(g);
+  let html=`<b style="color:${esc(col.stroke)}">${esc(node.name)}</b>`;
+  if(node.nickname) html+=`<br><span style="color:var(--text3)">${esc(node.nickname)}</span>`;
+  html+=`<br><span style="color:var(--text3)">${esc(GEN_LABELS[Math.min(g,9)])}</span>`;
+  if(node.birthYear) html+=`<br>📅 ${esc(node.birthYear)}${node.deathYear?' — '+esc(node.deathYear):''}`;
+  if(node.location) html+=`<br>📍 ${esc(node.location)}`;
+  const cc=(node.children||[]).length;
+  if(cc) html+=`<br>👶 ${cc} ${cc===1?'ابن':'أبناء'}`;
+  tt.innerHTML=html;
+  tt.classList.add('show');
+  moveTooltip(event);
+}
+function moveTooltip(event){
+  const tt=document.getElementById('tooltip');
+  const area=document.getElementById('treeArea').getBoundingClientRect();
+  let x=event.clientX-area.left+12;
+  let y=event.clientY-area.top+12;
+  if(x+220>area.width) x-=240;
+  if(y+100>area.height) y-=110;
+  tt.style.left=x+'px';
+  tt.style.top=y+'px';
+}
+function hideTooltip(){
+  document.getElementById('tooltip').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CONTEXT MENU
+// ═══════════════════════════════════════════════════════════
+function showCtxMenu(x,y){
+  const m=document.getElementById('ctxMenu');
+  m.classList.add('show');
+  // Temporarily show off-screen to measure dimensions
+  m.style.left='-9999px'; m.style.top='-9999px';
+  const mw=m.offsetWidth||160, mh=m.offsetHeight||200;
+  // Clamp to viewport
+  const px=Math.min(x, window.innerWidth-mw-8);
+  const py=Math.min(y, window.innerHeight-mh-8);
+  m.style.left=px+'px'; m.style.top=py+'px';
+  setTimeout(()=>document.addEventListener('click',hideCtxMenu,{once:true}),10);
+}
+function hideCtxMenu(){ document.getElementById('ctxMenu').classList.remove('show'); }
+
+function ctxAddChild(){
+  hideCtxMenu();
+  openAddChildModal(ctxTargetId);
+}
+function ctxEdit(){
+  hideCtxMenu();
+  openEditModal(ctxTargetId);
+}
+function ctxDelete(){
+  hideCtxMenu();
+  openDeleteModal(ctxTargetId);
+}
+function ctxShowPath(){
+  hideCtxMenu();
+  if(!ctxTargetId) return;
+  pathIds=ancestors(ctxTargetId);
+  highlightedIds.clear();
+  renderTree();
+  showPathIndicator();
+}
+function ctxHighlightFamily(){
+  hideCtxMenu();
+  if(!ctxTargetId) return;
+  const node=find(ctxTargetId);
+  highlightedIds.clear();
+  pathIds=[];
+  function collectAll(n){ highlightedIds.add(n.id); (n.children||[]).forEach(collectAll); }
+  collectAll(node);
+  // Also add ancestors
+  ancestors(ctxTargetId).forEach(id=>highlightedIds.add(id));
+  renderTree();
+}
+
+function showPathIndicator(){
+  const pi=document.getElementById('pathIndicator');
+  let html='<span class="path-close" onclick="clearPath()">✕</span>';
+  pathIds.forEach((id,i)=>{
+    const node=find(id);
+    if(!node) return;
+    if(i>0) html+='<span class="pi-arrow">›</span>';
+    html+=`<span class="pi-name" onclick="selectAndScrollTo('${escId(id)}')" style="cursor:pointer">${esc(node.name)}</span>`;
+  });
+  pi.innerHTML=html;
+  pi.classList.add('show');
+}
+function clearPath(){
+  pathIds=[];
+  highlightedIds.clear();
+  d3.select('#pathIndicator').classed('show',false);
+  renderTree();
+}
+
+function selectAndScrollTo(id){
+  selectedId=id;
+  renderTree();
+  showPersonSidebar(id);
+  scrollToNode(id);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SIDEBAR
+// ═══════════════════════════════════════════════════════════
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));
+}
+
+function showPersonSidebar(id){
+  const node=find(id);
+  if(!node) return;
+  const g=genMap[id]||1;
+  const col=gc(g);
+  const parentId=parentMap[id];
+  const parentNode=parentId?find(parentId):null;
+  const children=node.children||[];
+  const gen=GEN_LABELS[Math.min(g,9)];
+
+  const isAdmin = currentUser?.role === 'admin';
+  const safeId  = escId(id);
+  const photo   = getPhoto(id);
+
+  const childChips = children.length
+    ? children.map(c=>`<span class="chip" onclick="selectAndScrollTo('${escId(c.id)}')">${esc(c.name)}</span>`).join('')
+    : '<span style="color:var(--text3);font-size:12px">لا يوجد أبناء مسجلون</span>';
+
+  const dead = node.deathYear
+    ? `<span style="color:var(--text3);font-size:11px">(†${esc(node.deathYear)})</span>`
+    : '';
+
+  const adminActions = isAdmin ? `
+    <div class="action-bar">
+      <button class="btn btn-primary btn-sm" onclick="openAddChildModal('${safeId}')">➕ ابن</button>
+      <button class="btn btn-ghost btn-sm" onclick="openEditModal('${safeId}')">✏️ تعديل</button>
+      <button class="btn btn-ghost btn-sm" onclick="ctxTargetId='${safeId}';ctxShowPath()">🗺 مسار</button>
+      <button class="btn btn-danger btn-sm" onclick="openDeleteModal('${safeId}')">🗑</button>
+    </div>` : `
+    <div class="action-bar">
+      <button class="btn btn-ghost btn-sm" onclick="ctxTargetId='${safeId}';ctxShowPath()">🗺 مسار للجذر</button>
+      <button class="btn btn-ghost btn-sm" onclick="ctxTargetId='${safeId}';ctxHighlightFamily()">✨ إبراز العائلة</button>
+    </div>`;
+
+  document.getElementById('sidebarDetails').innerHTML=`
+    <div class="person-card">
+      <div class="person-card-header">
+        <div class="person-avatar" ${isAdmin?`onclick="openPhotoModal('${safeId}')" title="انقر لتغيير الصورة" style="cursor:pointer"`:''}>${photo?`<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:'👤'}</div>
+        <div class="person-info-main">
+          <h3>${esc(node.name)} ${dead}</h3>
+          ${node.nickname?`<div style="font-size:12px;color:var(--text3)">${esc(node.nickname)}</div>`:''}
+          <span class="gen-tag" style="background:${esc(col.fill)};color:${esc(col.stroke)};border:1px solid ${esc(col.stroke)}">${esc(gen)}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="label">الأب</span>
+        <span class="val">
+          ${parentNode
+            ? `<span class="chip" onclick="selectAndScrollTo('${escId(parentNode.id)}')">${esc(parentNode.name)}</span>`
+            : '<span style="color:var(--text3)">جذر الشجرة</span>'}
+        </span>
+      </div>
+      ${node.birthDate?`<div class="info-row"><span class="label">الميلاد</span><span class="val">📅 ${esc(_formatDate(node.birthDate))}</span></div>`:''}
+      ${node.deathYear?`<div class="info-row"><span class="label">الوفاة</span><span class="val">✝ ${esc(node.deathYear)}</span></div>`:''}
+      ${(node.city||node.country)?`<div class="info-row"><span class="label">المحل</span><span class="val">📍 ${[node.city,node.country].filter(Boolean).map(esc).join('، ')}</span></div>`:''}
+      <div class="info-row">
+        <span class="label">الأبناء</span>
+        <span class="val" style="font-weight:700;color:var(--gold2)">${children.length}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">الأحفاد</span>
+        <span class="val" style="font-weight:700;color:var(--gold2)">${countDesc(node)}</span>
+      </div>
+      ${node.notes?`<div class="info-row"><span class="label">ملاحظات</span><span class="val">${esc(node.notes)}</span></div>`:''}
+      <div style="margin-top:10px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">الأبناء المباشرون</div>
+        <div class="chips">${childChips}</div>
+      </div>
+      ${adminActions}
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATS
+// ═══════════════════════════════════════════════════════════
+function renderStats(){
+  const total=allNodes.length;
+  const maxGen=Math.max(...Object.values(genMap),0);
+  const genCounts={};
+  allNodes.forEach(n=>{ const g=genMap[n.id]||1; genCounts[g]=(genCounts[g]||0)+1; });
+  const withLocation=allNodes.filter(n=>n.location).length;
+  const withNotes=allNodes.filter(n=>n.notes).length;
+  const deceased=allNodes.filter(n=>n.deathYear).length;
+
+  let genRows='';
+  for(let g=1;g<=Math.min(maxGen,9);g++){
+    const col=gc(g);
+    const pct=Math.round((genCounts[g]||0)/total*100);
+    genRows+=`
+      <div class="gen-row">
+        <div class="gen-dot" style="background:${col.stroke}"></div>
+        <span class="gen-row-label">${GEN_LABELS[g]||'الجيل '+g}</span>
+        <div style="flex:1;height:4px;background:var(--surface3);border-radius:2px;margin:0 8px">
+          <div style="height:100%;width:${pct}%;background:${col.stroke};border-radius:2px;transition:width .5s"></div>
+        </div>
+        <span class="gen-count">${genCounts[g]||0}</span>
+      </div>`;
+  }
+
+  document.getElementById('sidebarStats').innerHTML=`
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">إجمالي الأشخاص</div></div>
+      <div class="stat-box"><div class="stat-num">${maxGen}</div><div class="stat-label">عدد الأجيال</div></div>
+      <div class="stat-box"><div class="stat-num">${withLocation}</div><div class="stat-label">لديهم موقع</div></div>
+      <div class="stat-box"><div class="stat-num">${deceased}</div><div class="stat-label">متوفون</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600">توزيع الأجيال</div>
+    <div class="gen-list">${genRows}</div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════════════════════
+// Debounce timer for search
+let _searchTimer = null;
+let _searchCursor = -1; // keyboard nav index
+
+function handleSearch(val){
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(() => _doSearch(val), 180);
+}
+
+function _doSearch(val){
+  const sr=document.getElementById('searchResults');
+  _searchCursor = -1;
+  if(!val.trim()){sr.style.display='none';return;}
+
+  const results=allNodes.filter(n=>
+    n.name.includes(val)||
+    (n.nickname&&n.nickname.includes(val))||
+    (n.location&&n.location.includes(val))
+  ).slice(0,10);
+
+  if(!results.length){
+    sr.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--text3)">لا توجد نتائج</div>';
+    sr.style.display='block';
+    return;
+  }
+
+  sr.innerHTML=results.map((n,i)=>{
+    const g=genMap[n.id]||1;
+    const col=gc(g);
+    return `<div class="search-item" data-idx="${i}" data-id="${escId(n.id)}" onclick="pickSearchResult('${escId(n.id)}')">
+      <span style="width:8px;height:8px;border-radius:50%;background:${esc(col.stroke)};display:inline-block;flex-shrink:0"></span>
+      <span>${esc(n.name)}</span>
+      <span class="si-gen">${esc(GEN_LABELS[Math.min(g,9)])}</span>
+    </div>`;
+  }).join('');
+  sr.style.display='block';
+}
+
+// Keyboard nav inside search results (↑↓ Enter Esc)
+document.getElementById('searchInput')?.addEventListener('keydown', e => {
+  const sr = document.getElementById('searchResults');
+  const items = sr.querySelectorAll('.search-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _searchCursor = Math.min(_searchCursor+1, items.length-1);
+    items.forEach((el,i)=>el.classList.toggle('active', i===_searchCursor));
+    items[_searchCursor]?.scrollIntoView({block:'nearest'});
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _searchCursor = Math.max(_searchCursor-1, 0);
+    items.forEach((el,i)=>el.classList.toggle('active', i===_searchCursor));
+    items[_searchCursor]?.scrollIntoView({block:'nearest'});
+  } else if (e.key === 'Enter' && _searchCursor >= 0) {
+    e.preventDefault();
+    pickSearchResult(items[_searchCursor].dataset.id);
+  } else if (e.key === 'Escape') {
+    sr.style.display='none';
+    document.getElementById('searchInput').blur();
+  }
+});
+
+function pickSearchResult(id){
+  document.getElementById('searchResults').style.display='none';
+  document.getElementById('searchInput').value='';
+  _searchCursor=-1;
+  selectedId=id;
+  renderTree();
+  showPersonSidebar(id);
+  scrollToNode(id);
+  switchTab('details');
+}
+
+function advancedSearch(val){
+  const sb=document.getElementById('sidebarSearch');
+  if(!val.trim()){
+    sb.innerHTML='<div class="empty-state"><div class="icon">🔍</div><p>اكتب للبحث</p></div>';
+    return;
+  }
+  const results=allNodes.filter(n=>
+    n.name.includes(val)||(n.nickname&&n.nickname.includes(val))||
+    (n.city&&n.city.includes(val))||(n.country&&n.country.includes(val))||
+    (n.notes&&n.notes.includes(val))
+  );
+  if(!results.length){
+    sb.innerHTML='<div class="empty-state"><div class="icon">😕</div><p>لا توجد نتائج</p></div>';
+    return;
+  }
+  sb.innerHTML=results.map(n=>{
+    const g=genMap[n.id]||1;
+    const col=gc(g);
+    return `<div class="person-card" style="cursor:pointer" onclick="selectAndScrollTo('${escId(n.id)}');switchTab('details')">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:8px;height:8px;border-radius:50%;background:${esc(col.stroke)};flex-shrink:0"></div>
+        <div>
+          <div style="font-weight:600;font-size:13px">${esc(n.name)}</div>
+          <div style="font-size:11px;color:var(--text3)">${esc(GEN_LABELS[Math.min(g,9)])}${n.location?' • '+esc(n.location):''}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Close search on outside click
+document.addEventListener('click',function(e){
+  if(!document.getElementById('searchBox').contains(e.target)){
+    document.getElementById('searchResults').style.display='none';
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+//  ADD / EDIT MODAL
+// ═══════════════════════════════════════════════════════════
+function populateParentSelect(excludeId){
+  const sel=document.getElementById('fParent');
+  sel.innerHTML='<option value="">— جذر الشجرة —</option>';
+  allNodes.forEach(n=>{
+    if(n.id===excludeId) return;
+    const g=genMap[n.id]||1;
+    const opt=document.createElement('option');
+    opt.value=n.id;
+    opt.textContent=`${n.name} — ${GEN_LABELS[Math.min(g,9)]}`;
+    sel.appendChild(opt);
+  });
+}
+
+function _clearEditForm(){
+  ['fName','fNickname','fBirthDate','fDeathYear','fCity','fCountry','fNotes']
+    .forEach(id=>{ document.getElementById(id).value=''; });
+}
+function openAddModal(){
+  editMode='add'; editNodeId=null; editParentId=null;
+  document.getElementById('editTitle').textContent='➕ إضافة شخص';
+  _clearEditForm();
+  document.getElementById('parentGroup').style.display='block';
+  populateParentSelect(null);
+  document.getElementById('fParent').value='';
+  document.getElementById('editOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fName').focus(),150);
+}
+
+function openAddChildModal(parentId){
+  editMode='addChild'; editParentId=parentId; editNodeId=null;
+  const p=find(parentId);
+  document.getElementById('editTitle').textContent=`➕ إضافة ابن لـ "${p?p.name:''}"`;
+  _clearEditForm();
+  document.getElementById('parentGroup').style.display='none';
+  document.getElementById('editOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fName').focus(),150);
+}
+
+function openEditModal(id){
+  editMode='edit'; editNodeId=id;
+  const node=find(id);
+  if(!node) return;
+  document.getElementById('editTitle').textContent=`✏️ تعديل "${node.name}"`;
+  document.getElementById('fName').value=node.name;
+  document.getElementById('fNickname').value=node.nickname||'';
+  document.getElementById('fBirthDate').value=node.birthDate||'';
+  document.getElementById('fDeathYear').value=node.deathYear||'';
+  document.getElementById('fCity').value=node.city||'';
+  document.getElementById('fCountry').value=node.country||'';
+  document.getElementById('fNotes').value=node.notes||'';
+  document.getElementById('parentGroup').style.display='block';
+  populateParentSelect(id);
+  document.getElementById('fParent').value=parentMap[id]||'';
+  document.getElementById('editOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('fName').focus(),150);
+}
+
+function closeEdit(){ document.getElementById('editOverlay').classList.remove('open'); }
+
+function saveEdit(){
+  const name=document.getElementById('fName').value.trim();
+  if(!name){ toast('يرجى إدخال الاسم','error'); return; }
+
+  snapshotForUndo();
+
+  const data={
+    name,
+    nickname:  document.getElementById('fNickname').value.trim(),
+    birthDate: document.getElementById('fBirthDate').value.trim(),
+    deathYear: document.getElementById('fDeathYear').value.trim(),
+    city:      document.getElementById('fCity').value.trim(),
+    country:   document.getElementById('fCountry').value.trim(),
+    notes:     document.getElementById('fNotes').value.trim(),
+    children:  []
+  };
+
+  if(editMode==='add'){
+    const parentId=document.getElementById('fParent').value;
+    const newNode={id:uid(),...data};
+    if(!parentId){
+      familyData.children=familyData.children||[];
+      familyData.children.push(newNode);
+    } else {
+      const p=find(parentId);
+      if(p){ p.children=p.children||[]; p.children.push(newNode); }
+    }
+    selectedId=newNode.id;
+    logActivity('add', `إضافة "${name}"`);
+    toast(`تمت إضافة "${name}" ✓`,'success');
+  }
+  else if(editMode==='addChild'){
+    const newNode={id:uid(),...data};
+    const p=find(editParentId);
+    if(p){ p.children=p.children||[]; p.children.push(newNode); }
+    selectedId=newNode.id;
+    logActivity('add', `إضافة "${name}"`);
+    toast(`تمت إضافة "${name}" ✓`,'success');
+  }
+  else if(editMode==='edit'){
+    const node=find(editNodeId);
+    if(!node) return;
+    const newPId=document.getElementById('fParent').value;
+    const oldPId=parentMap[editNodeId]||'';
+    Object.assign(node,{name:data.name,nickname:data.nickname,birthDate:data.birthDate,deathYear:data.deathYear,city:data.city,country:data.country,notes:data.notes});
+    if(newPId!==oldPId){
+      if(oldPId){ const op=find(oldPId); if(op) op.children=op.children.filter(c=>c.id!==editNodeId); }
+      if(newPId){ const np=find(newPId); if(np){np.children=np.children||[];np.children.push(node);} }
+      else { familyData.children=familyData.children||[]; if(!familyData.children.find(c=>c.id===editNodeId)) familyData.children.push(node); }
+    }
+    selectedId=editNodeId;
+    logActivity('edit', `تعديل "${name}"`);
+    toast(`تم تعديل "${name}" ✓`,'success');
+  }
+
+  closeEdit();
+  markUnsaved();
+  renderTree();
+  if(selectedId) showPersonSidebar(selectedId);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DELETE
+// ═══════════════════════════════════════════════════════════
+function openDeleteModal(id){
+  deletingId=id;
+  const node=find(id);
+  if(!node) return;
+  const desc=countDesc(node);
+  let msg=`هل أنت متأكد من حذف <b style="color:var(--text)">"${node.name}"</b>؟`;
+  if(desc>0) msg+=`<br><br><span style="color:var(--danger)">⚠ تحذير: سيتم حذف ${desc+1} شخص (بما فيهم جميع الأبناء والأحفاد).</span>`;
+  document.getElementById('deleteMsg').innerHTML=msg;
+  document.getElementById('deleteOverlay').classList.add('open');
+}
+
+function closeDelete(){ document.getElementById('deleteOverlay').classList.remove('open'); deletingId=null; }
+
+function confirmDelete(){
+  if(!deletingId) return;
+  if(deletingId===familyData.id){ toast('لا يمكن حذف الجذر','error'); closeDelete(); return; }
+  const node=find(deletingId);
+  const name=node?node.name:'';
+  snapshotForUndo();
+  logActivity('delete', `حذف "${name}"`);
+  remove(deletingId);
+  if(selectedId===deletingId){ selectedId=null; document.getElementById('sidebarDetails').innerHTML='<div class="empty-state"><div class="icon">👆</div><p>انقر على شخص</p></div>'; }
+  toast(`تم حذف "${name}" ✓`,'success');
+  closeDelete();
+  markUnsaved();
+  renderTree();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UNSAVED
+// ═══════════════════════════════════════════════════════════
+function markUnsaved(){
+  hasUnsaved=true;
+  document.getElementById('unsavedBadge').classList.add('show');
+  setSyncDot(true);
+  // Persist to localStorage immediately — data survives page refresh
+  persistLocally();
+  // Notify other open tabs in real time
+  broadcastUpdate();
+}
+function markSaved(){
+  hasUnsaved=false;
+  document.getElementById('unsavedBadge').classList.remove('show');
+  setSyncDot(false);
+}
+window.addEventListener('beforeunload',e=>{ if(hasUnsaved){e.preventDefault();e.returnValue='';} });
+
+// ═══════════════════════════════════════════════════════════
+//  EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════
+function exportData(){
+  if(currentUser?.role !== 'admin'){ toast('غير مسموح لك بهذا الإجراء','error'); return; }
+  const json=JSON.stringify(cleanNode(familyData),null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='family_tree_'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();
+  markSaved();
+  logActivity('export', 'تصدير الشجرة JSON');
+  toast('✅ تم حفظ الشجرة — احتفظ بالملف في مكان آمن','success');
+}
+
+function openImport(){ document.getElementById('importFile').click(); }
+
+function handleImport(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      familyData=data;
+      selectedId=null;
+      highlightedIds.clear();
+      pathIds=[];
+      renderTree();
+      markSaved();
+      document.getElementById('sidebarDetails').innerHTML='<div class="empty-state"><div class="icon">✅</div><p>تم تحميل الشجرة بنجاح</p></div>';
+      toast('✅ تم تحميل الشجرة بنجاح','success');
+    }catch(err){ toast('خطأ في قراءة الملف','error'); }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PRINT
+// ═══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  PRINT / PDF — improved version
+//  • SVG uses viewBox so the browser scales it to fit the page
+//  • @page sets A3 landscape for wide trees
+//  • Clicking "طباعة → PDF" uses the browser's built-in
+//    Print-to-PDF which produces a perfectly scaled single page
+//    (or multi-page if the tree is very tall)
+// ══════════════════════════════════════════════════════════
+function printTree(){
+  if(currentUser?.role !== 'admin'){ toast('غير مسموح لك بهذا الإجراء','error'); return; }
+  const printColors=[
+    null,
+    {fill:'#f3e8ff',stroke:'#9333ea',text:'#3b0764'},
+    {fill:'#cffafe',stroke:'#0891b2',text:'#083344'},
+    {fill:'#fef3c7',stroke:'#d97706',text:'#451a03'},
+    {fill:'#dbeafe',stroke:'#2563eb',text:'#1e1b4b'},
+    {fill:'#dcfce7',stroke:'#16a34a',text:'#052e16'},
+    {fill:'#ffe4e6',stroke:'#e11d48',text:'#4c0519'},
+    {fill:'#ede9fe',stroke:'#7c3aed',text:'#2e1065'},
+    {fill:'#ccfbf1',stroke:'#0d9488',text:'#042f2e'},
+    {fill:'#ffedd5',stroke:'#ea580c',text:'#431407'},
+  ];
+  const GLL=['','الجيل الأول','الجيل الثاني','الجيل الثالث','الجيل الرابع','الجيل الخامس','الجيل السادس','الجيل السابع','الجيل الثامن','الجيل التاسع'];
+
+  // Layout pass
+  const PNW=96, PNH=36, PHGAP=16, PVGAP=72;
+  const pGenMap={}, pAllNodes=[];
+  function pbm(node,parent,gen){ pGenMap[node.id]=gen; pAllNodes.push(node); (node.children||[]).forEach(c=>pbm(c,node,gen+1)); }
+  pbm(familyData,null,1);
+  function pmW(node){ if(!node.children||!node.children.length){node._pw=PNW;return PNW;} let t=node.children.reduce((s,c,i)=>s+pmW(c)+(i?PHGAP:0),0); node._pw=Math.max(PNW,t); return node._pw; }
+  pmW(familyData);
+  function pPlace(node,x,y){ node._px=x+node._pw/2-PNW/2; node._py=y; if(!node.children||!node.children.length)return; let cx=x; node.children.forEach(c=>{pPlace(c,cx,y+PNH+PVGAP);cx+=c._pw+PHGAP;}); }
+  pPlace(familyData,30,80);
+
+  const svgW = Math.max(...pAllNodes.map(n=>n._px+PNW))+60;
+  const svgH = Math.max(...pAllNodes.map(n=>n._py+PNH))+60;
+  const maxGen = Math.max(...Object.values(pGenMap));
+
+  // Auto-detect best page format:
+  // A3 landscape (420×297mm usable ~390×270mm ≈ 1476×1020px at 96dpi)
+  // Use A3 landscape if tree is very wide, A4 portrait otherwise.
+  const autoLandscape = svgW > 900 || svgH < svgW * 0.7;
+  const autoFormat = autoLandscape ? 'A3 landscape' : 'A4 portrait';
+  // Estimated page count (rough: A3 landscape usable ≈ 1100px wide after scaling)
+  const estPages = Math.max(1, Math.ceil(svgH / (autoLandscape ? 900 : 1200)));
+
+  // Build SVG content
+  let edges='', nodes='';
+  pAllNodes.forEach(node=>{
+    (node.children||[]).forEach(child=>{
+      const px=node._px+PNW/2, py=node._py+PNH;
+      const cx=child._px+PNW/2, cy=child._py, my=(py+cy)/2;
+      edges+=`<path d="M${px},${py} C${px},${my} ${cx},${my} ${cx},${cy}" fill="none" stroke="#b0b8c8" stroke-width="1.4"/>`;
+    });
+  });
+  pAllNodes.forEach(node=>{
+    const g=pGenMap[node.id]||1;
+    const col=printColors[Math.min(g,9)];
+    const dn=node.name.replace('⭐ ','');
+    const hasStar=node.name.startsWith('⭐');
+    nodes+=`<g>
+      <rect x="${node._px}" y="${node._py}" width="${PNW}" height="${PNH}" rx="7" fill="${col.fill}" stroke="${col.stroke}" stroke-width="1.3"/>
+      ${hasStar?`<text x="${node._px+7}" y="${node._py+PNH/2}" dominant-baseline="central" fill="#b8922f" font-size="10">⭐</text>`:''}
+      <text x="${node._px+PNW/2+(hasStar?5:0)}" y="${node._py+PNH/2}" text-anchor="middle" dominant-baseline="central" fill="${col.text}" font-size="13" font-family="Tajawal,Arial,sans-serif" font-weight="600">${dn.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</text>
+      ${node.deathYear?`<text x="${node._px+PNW-5}" y="${node._py+PNH-4}" text-anchor="end" fill="#9ca3af" font-size="8" font-family="Tajawal,Arial,sans-serif">†${node.deathYear}</text>`:''}
+    </g>`;
+  });
+
+  // Legend
+  let legend='';
+  for(let g=1;g<=Math.min(maxGen,9);g++){
+    const col=printColors[g];
+    legend+=`<span style="display:inline-flex;align-items:center;gap:5px;margin:0 8px 5px 0;font-size:12px"><span style="width:11px;height:11px;border-radius:50%;background:${col.stroke};display:inline-block;flex-shrink:0"></span>${GLL[g]||'الجيل '+g}</span>`;
+  }
+
+  const today = new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
+  const total  = pAllNodes.length;
+
+  // The SVG uses viewBox + preserveAspectRatio so the browser
+  // scales it automatically to fit the printed page width.
+  const html=`<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>شجرة عائلة المجاحيد سواعد</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#fff;font-family:Tajawal,Arial,sans-serif;direction:rtl;color:#111}
+  /* Toolbar — hidden on print */
+  .toolbar{display:flex;gap:10px;justify-content:center;align-items:center;padding:14px;background:#f8f9fa;border-bottom:1px solid #e5e7eb;flex-wrap:wrap}
+  .toolbar button{padding:9px 22px;border-radius:8px;border:none;font-family:Tajawal,sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+  .btn-print{background:#1d4ed8;color:#fff}
+  .btn-landscape{background:#059669;color:#fff}
+  .btn-close{background:#e5e7eb;color:#374151}
+  .toolbar .hint{font-size:12px;color:#6b7280}
+  /* Page header */
+  .pg-header{text-align:center;padding:18px 32px 12px;border-bottom:2px solid #e8d5a0;position:relative}
+  .pg-header::before{
+    content:'❧ ✦ ❧';
+    display:block;font-size:14px;color:#b8922f;letter-spacing:12px;margin-bottom:6px;
+  }
+  .pg-header::after{
+    content:'❧ ✦ ❧';
+    display:block;font-size:14px;color:#b8922f;letter-spacing:12px;margin-top:6px;
+  }
+  .pg-header h1{font-family:'Amiri',serif;font-size:28px;font-weight:700;color:#2d1a00}
+  .pg-header .sub{font-size:13px;color:#7a5c2e;margin-top:2px;font-family:'Amiri',serif}
+  .pg-header .meta{font-size:12px;margin-top:4px;color:#555}
+  /* Legend */
+  .legend{text-align:center;padding:8px 32px;border-bottom:1px solid #eee;background:#fafafa;flex-wrap:wrap;display:flex;justify-content:center}
+  /* SVG container — auto-scale to page width */
+  .tree-wrap{width:100%;overflow:visible;padding:16px 0}
+  .tree-wrap svg{
+    width:100%;
+    height:auto;
+    display:block;
+  }
+  .footer{text-align:center;padding:12px;border-top:2px solid #e8d5a0;font-size:11px;color:#7a5c2e;font-family:'Amiri',serif;letter-spacing:1px}
+  /* ── Arabic decorative print border ───────────────────── */
+  .arabic-border-frame{
+    position:fixed; inset:6mm; pointer-events:none; z-index:9999;
+    border:2.5px solid #b8922f;
+    box-shadow:inset 0 0 0 1.5px #b8922f, inset 0 0 0 5px #fff, inset 0 0 0 6.5px #b8922f;
+  }
+  /* Corner ornaments */
+  .arabic-border-frame::before,
+  .arabic-border-frame::after{
+    content:'';
+    position:absolute;
+    width:28px; height:28px;
+    background:
+      radial-gradient(circle at 50% 50%, #b8922f 30%, transparent 31%),
+      conic-gradient(from 0deg, #b8922f 0 22.5deg, transparent 22.5deg 45deg,
+                     #b8922f 45deg 67.5deg, transparent 67.5deg 90deg,
+                     #b8922f 90deg 112.5deg, transparent 112.5deg 135deg,
+                     #b8922f 135deg 157.5deg, transparent 157.5deg 180deg,
+                     #b8922f 180deg 202.5deg, transparent 202.5deg 225deg,
+                     #b8922f 225deg 247.5deg, transparent 247.5deg 270deg,
+                     #b8922f 270deg 292.5deg, transparent 292.5deg 315deg,
+                     #b8922f 315deg 337.5deg, transparent 337.5deg 360deg);
+  }
+  .arabic-border-frame::before{ top:-14px; right:-14px; }
+  .arabic-border-frame::after{  bottom:-14px; left:-14px; }
+  /* The two other corners via separate elements */
+  .corner-tl,.corner-br{
+    position:fixed; width:28px; height:28px; z-index:10000; pointer-events:none;
+    background:
+      radial-gradient(circle at 50% 50%, #b8922f 30%, transparent 31%),
+      conic-gradient(from 0deg, #b8922f 0 22.5deg, transparent 22.5deg 45deg,
+                     #b8922f 45deg 67.5deg, transparent 67.5deg 90deg,
+                     #b8922f 90deg 112.5deg, transparent 112.5deg 135deg,
+                     #b8922f 135deg 157.5deg, transparent 157.5deg 180deg,
+                     #b8922f 180deg 202.5deg, transparent 202.5deg 225deg,
+                     #b8922f 225deg 247.5deg, transparent 247.5deg 270deg,
+                     #b8922f 270deg 292.5deg, transparent 292.5deg 315deg,
+                     #b8922f 315deg 337.5deg, transparent 337.5deg 360deg);
+  }
+  .corner-tl{ top:calc(6mm - 14px); left:calc(6mm - 14px); }
+  .corner-br{ bottom:calc(6mm - 14px); right:calc(6mm - 14px); }
+  /* Side repeating geometric diamonds */
+  .arabic-border-frame .side-pattern{
+    position:absolute;
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent 0, transparent 10px,
+      #b8922f 10px, #b8922f 11px,
+      transparent 11px, transparent 14px,
+      #b8922f 14px, #b8922f 15px,
+      transparent 15px, transparent 25px
+    );
+    height:3px;
+    left:20px; right:20px;
+  }
+  .arabic-border-frame .side-pattern.top   { top:-1.5px; }
+  .arabic-border-frame .side-pattern.bottom{ bottom:-1.5px; }
+  .arabic-border-frame .side-pattern-v{
+    position:absolute;
+    background-image: repeating-linear-gradient(
+      180deg,
+      transparent 0, transparent 10px,
+      #b8922f 10px, #b8922f 11px,
+      transparent 11px, transparent 14px,
+      #b8922f 14px, #b8922f 15px,
+      transparent 15px, transparent 25px
+    );
+    width:3px;
+    top:20px; bottom:20px;
+  }
+  .arabic-border-frame .side-pattern-v.right{ right:-1.5px; }
+  .arabic-border-frame .side-pattern-v.left { left:-1.5px; }
+
+  /* Toolbar hidden on print, border shown */
+  @media print{
+    .toolbar{display:none!important}
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .arabic-border-frame,.corner-tl,.corner-br{ display:block!important; }
+  }
+  @media screen{
+    .arabic-border-frame,.corner-tl,.corner-br{ display:none; }
+  }
+  /* Auto-detected page format — overridable via button */
+  @page{size:${autoFormat};margin:14mm}
+</style>
+</head>
+<body>
+<!-- Arabic decorative border — visible only on print -->
+<div class="arabic-border-frame">
+  <div class="side-pattern top"></div>
+  <div class="side-pattern bottom"></div>
+  <div class="side-pattern-v right"></div>
+  <div class="side-pattern-v left"></div>
+</div>
+<div class="corner-tl"></div>
+<div class="corner-br"></div>
+
+<div class="toolbar">
+  <button class="btn-print" onclick="window.print()">🖨 طباعة / حفظ كـ PDF</button>
+  <button class="btn-landscape" id="btnOrient" onclick="switchOrientation()">🔄 تبديل الاتجاه (${autoLandscape?'A3 عرضي':'A4 عمودي'})</button>
+  <button class="btn-close" onclick="window.close()">✕ إغلاق</button>
+  <span class="hint">💡 عدد الصفحات المتوقع: <b>${estPages}</b> &nbsp;|&nbsp; لحفظ PDF اختر "حفظ كـ PDF"</span>
+</div>
+<div class="pg-header">
+  <h1>🌳 شجرة عائلة المجاحيد سواعد</h1>
+  <div class="sub">سوريا &bull; فلسطين &bull; الأردن</div>
+  <div class="meta">إجمالي: <b>${total}</b> شخص &nbsp;|&nbsp; الأجيال: <b>${maxGen}</b> &nbsp;|&nbsp; ${today}</div>
+</div>
+<div class="legend">${legend}</div>
+<div class="tree-wrap">
+  <svg viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="xMidYMin meet" xmlns="http://www.w3.org/2000/svg">
+    ${edges}${nodes}
+  </svg>
+</div>
+<div class="footer">❧ &nbsp; شجرة عائلة المجاحيد سواعد &nbsp; &mdash; &nbsp; ${today} &nbsp; ❧</div>
+<script>
+  let _fmt='${autoFormat}';
+  const _formats=['A3 landscape','A4 portrait','A4 landscape','A3 portrait'];
+  let _fi=_formats.indexOf(_fmt);
+  function switchOrientation(){
+    _fi=(_fi+1)%_formats.length;
+    _fmt=_formats[_fi];
+    let s=document.getElementById('pageStyle');
+    if(!s){s=document.createElement('style');s.id='pageStyle';document.head.appendChild(s);}
+    s.textContent='@page{size:'+_fmt+';margin:10mm}';
+    document.getElementById('btnOrient').textContent='🔄 '+_fmt;
+  }
+<\/script>
+</body>
+</html>`;
+
+  const w=window.open('','_blank','width=1500,height=900,scrollbars=yes');
+  if(!w){ toast('السماح بالنوافذ المنبثقة مطلوب','error'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PHOTOS — stored as base64 in localStorage keyed by node id
+// ═══════════════════════════════════════════════════════════
+const PHOTOS_KEY = 'ft_photos';
+let photoStore = {};
+let photoTargetId = null;
+let _pendingPhotoData = null;   // module-level; cleared on every modal open
+
+function loadPhotos(){
+  try { photoStore = JSON.parse(localStorage.getItem(PHOTOS_KEY)||'{}'); } catch(e){}
+}
+function savePhotos(){
+  try {
+    localStorage.setItem(PHOTOS_KEY, JSON.stringify(photoStore));
+  } catch(e) {
+    // localStorage quota exceeded — remove the oldest photo and retry once
+    const keys = Object.keys(photoStore);
+    if(keys.length > 0){ delete photoStore[keys[0]]; }
+    try { localStorage.setItem(PHOTOS_KEY, JSON.stringify(photoStore)); } catch(e2){}
+    toast('⚠ مساحة التخزين ممتلئة — تم حذف أقدم صورة تلقائياً','warn');
+  }
+}
+function getPhoto(id){ return photoStore[id] || null; }
+
+function openPhotoModal(id){
+  photoTargetId = id;
+  _pendingPhotoData = null;                              // always reset pending data
+  const node = find(id);
+  document.getElementById('photoModalTitle').textContent = `🖼 صورة — ${node?.name||''}`;
+  const existing = getPhoto(id);
+  const preview = document.getElementById('photoPreview');
+  const dz      = document.getElementById('dropZone');
+  if(existing){
+    preview.src = existing;
+    preview.style.display = 'block';
+    dz.style.display = 'none';
+  } else {
+    preview.src = '';
+    preview.style.display = 'none';
+    dz.style.display = '';
+  }
+  // Reset file input so the same file can be re-selected
+  const fi = document.getElementById('photoFileInput');
+  fi.value = '';
+  document.getElementById('btnRemovePhoto').style.display = existing ? '' : 'none';
+  document.getElementById('photoOverlay').classList.add('open');
+}
+function closePhoto(){
+  document.getElementById('photoOverlay').classList.remove('open');
+  photoTargetId = null;
+  _pendingPhotoData = null;
+}
+
+function dzOver(e){ e.preventDefault(); document.getElementById('dropZone').classList.add('drag-over'); }
+function dzLeave(e){ document.getElementById('dropZone').classList.remove('drag-over'); }
+function dzDrop(e){
+  e.preventDefault(); document.getElementById('dropZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if(file && file.type.startsWith('image/')) readPhotoFile(file);
+  else toast('الملف ليس صورة','error');
+}
+function handlePhotoFile(e){ const f=e.target.files[0]; if(f) readPhotoFile(f); }
+
+function readPhotoFile(file){
+  if(file.size > 5*1024*1024){ toast('الصورة أكبر من 5MB','error'); return; }
+  const dz = document.getElementById('dropZone');
+  dz.innerHTML = '<div class="dz-icon">⏳</div><p>جارٍ المعالجة…</p>';
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 300;
+      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL('image/jpeg', 0.85);
+      _pendingPhotoData = compressed;                    // store in module var, NOT DOM
+      const preview = document.getElementById('photoPreview');
+      preview.src = compressed;
+      preview.style.display = 'block';
+      dz.style.display = 'none';
+      dz.innerHTML = '<div class="dz-icon">📷</div><p>انقر لاختيار صورة أو اسحبها هنا</p><p style="font-size:11px;margin-top:4px;color:var(--text3)">JPG, PNG, WEBP — حد أقصى 5MB</p>';
+    };
+    img.onerror = () => { toast('تعذّر قراءة الصورة','error'); _resetDropZone(); };
+    img.src = ev.target.result;
+  };
+  reader.onerror = () => { toast('خطأ في قراءة الملف','error'); _resetDropZone(); };
+  reader.readAsDataURL(file);
+}
+function _resetDropZone(){
+  const dz = document.getElementById('dropZone');
+  dz.style.display='';
+  dz.innerHTML='<div class="dz-icon">📷</div><p>انقر لاختيار صورة أو اسحبها هنا</p><p style="font-size:11px;margin-top:4px;color:var(--text3)">JPG, PNG, WEBP — حد أقصى 5MB</p>';
+}
+
+function savePhoto(){
+  // Use the freshly-compressed data; fall back to existing photo (re-saving without change)
+  const data = _pendingPhotoData || getPhoto(photoTargetId);
+  if(!data || !data.startsWith('data:')){ toast('اختر صورة أولاً','warn'); return; }
+  if(!photoTargetId){ toast('خطأ: لم يتم تحديد الشخص','error'); return; }
+  photoStore[photoTargetId] = data;
+  savePhotos();
+  const savedId = photoTargetId;
+  closePhoto();
+  renderTree();
+  if(selectedId === savedId) showPersonSidebar(savedId);
+  logActivity('photo', `تم إضافة صورة لـ "${find(savedId)?.name||savedId}"`);
+  toast('✅ تم حفظ الصورة وتحديث الشجرة','success');
+}
+function removePhoto(){
+  if(!photoTargetId) return;
+  const name = find(photoTargetId)?.name || photoTargetId;
+  delete photoStore[photoTargetId];
+  savePhotos();
+  const savedId = photoTargetId;
+  closePhoto();
+  renderTree();
+  if(selectedId === savedId) showPersonSidebar(savedId);
+  logActivity('photo', `تم إزالة صورة "${name}"`);
+  toast('تم إزالة الصورة','success');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UNDO / REDO — snapshot-based history (max 30 states)
+// ═══════════════════════════════════════════════════════════
+const UNDO_MAX = 30;
+let _undoStack = [];
+let _redoStack = [];
+
+function snapshotForUndo(){
+  _undoStack.push(JSON.stringify(familyData));
+  if(_undoStack.length > UNDO_MAX) _undoStack.shift();
+  _redoStack = [];
+  _updateUndoButtons();
+}
+
+function undo(){
+  if(!_undoStack.length) return;
+  _redoStack.push(JSON.stringify(familyData));
+  familyData = JSON.parse(_undoStack.pop());
+  _updateUndoButtons();
+  renderTree();
+  if(selectedId) showPersonSidebar(selectedId);
+  persistLocally();
+  broadcastUpdate();
+  toast('↩ تراجع','warn');
+}
+function redo(){
+  if(!_redoStack.length) return;
+  _undoStack.push(JSON.stringify(familyData));
+  familyData = JSON.parse(_redoStack.pop());
+  _updateUndoButtons();
+  renderTree();
+  if(selectedId) showPersonSidebar(selectedId);
+  persistLocally();
+  broadcastUpdate();
+  toast('↪ إعادة','warn');
+}
+function _updateUndoButtons(){
+  const u=document.getElementById('btnUndo'),r=document.getElementById('btnRedo');
+  if(u) u.disabled=!_undoStack.length;
+  if(r) r.disabled=!_redoStack.length;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  THEME — dark / light toggle
+// ═══════════════════════════════════════════════════════════
+function toggleTheme(){
+  const light = document.body.classList.toggle('light-mode');
+  localStorage.setItem('ft_theme', light ? 'light' : 'dark');
+  document.getElementById('btnTheme').textContent = light ? '🌙' : '☀';
+}
+function applyTheme(){
+  const t = localStorage.getItem('ft_theme');
+  if(t==='light'){ document.body.classList.add('light-mode'); document.getElementById('btnTheme').textContent='🌙'; }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  COMPACT VIEW toggle
+// ═══════════════════════════════════════════════════════════
+let _compact = false;
+function toggleCompact(){
+  _compact = !_compact;
+  document.body.classList.toggle('compact-view', _compact);
+  document.getElementById('btnCompact').textContent = _compact ? '⊞' : '⊡';
+  renderTree();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GENERATION FILTER
+// ═══════════════════════════════════════════════════════════
+let hiddenGens = new Set();
+function toggleGenFilter(){
+  const bar = document.getElementById('genFilterBar');
+  bar.classList.toggle('show');
+  if(bar.classList.contains('show')) buildGenFilterChips();
+}
+function buildGenFilterChips(){
+  const maxGen = Math.max(...Object.values(genMap),0);
+  let html='';
+  for(let g=1;g<=Math.min(maxGen,9);g++){
+    const col=gc(g);
+    html+=`<span class="gen-filter-chip${hiddenGens.has(g)?' hidden-gen':''}"
+      style="background:${esc(col.fill)};color:${esc(col.stroke)};border-color:${esc(col.stroke)}"
+      onclick="toggleGenVisibility(${g})">${GEN_LABELS[g]||'الجيل '+g}</span>`;
+  }
+  document.getElementById('genFilterChips').innerHTML=html;
+}
+function toggleGenVisibility(g){
+  if(hiddenGens.has(g)) hiddenGens.delete(g); else hiddenGens.add(g);
+  buildGenFilterChips();
+  renderTree();
+}
+function clearGenFilter(){
+  hiddenGens.clear();
+  buildGenFilterChips();
+  renderTree();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FOCUS MODE — show only direct lineage of selected node
+// ═══════════════════════════════════════════════════════════
+let focusMode = false;
+let focusNodeId = null;
+
+function toggleFocusMode(){
+  if(!selectedId){ toast('اختر شخصاً أولاً','warn'); return; }
+  if(focusMode && focusNodeId===selectedId){ exitFocusMode(); return; }
+  focusMode = true;
+  focusNodeId = selectedId;
+  const node = find(focusNodeId);
+  document.getElementById('focusName').textContent = node?.name||'';
+  document.getElementById('focusBanner').classList.add('show');
+  document.getElementById('btnFocus').style.color='var(--blue2)';
+  renderTree();
+}
+function exitFocusMode(){
+  focusMode = false; focusNodeId = null;
+  document.getElementById('focusBanner').classList.remove('show');
+  document.getElementById('btnFocus').style.color='';
+  renderTree();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DOUBLE-CLICK → family zoom + highlight
+// ═══════════════════════════════════════════════════════════
+// (Hooked in renderTree node interactions — see patch below)
+
+// ═══════════════════════════════════════════════════════════
+//  ACTIVITY LOG
+// ═══════════════════════════════════════════════════════════
+const LOG_KEY = 'ft_activitylog';
+const LOG_MAX = 200;
+
+function logActivity(type, msg){
+  const log = getLog();
+  log.unshift({
+    time: new Date().toLocaleString('ar-SA'),
+    type, msg,
+    user: currentUser?.username||'?'
+  });
+  if(log.length > LOG_MAX) log.length = LOG_MAX;
+  localStorage.setItem(LOG_KEY, JSON.stringify(log));
+}
+function getLog(){ try{ return JSON.parse(localStorage.getItem(LOG_KEY)||'[]'); }catch(e){return [];} }
+
+function openLog(){
+  const log = getLog();
+  const icons = {add:'➕',edit:'✏️',delete:'🗑️',photo:'🖼',import:'📂',export:'💾',login:'🔐',password:'🔑'};
+  document.getElementById('logList').innerHTML = log.length
+    ? log.map(e=>`<div class="log-entry">
+        <span class="log-time">${esc(e.time)}</span>
+        <span class="log-icon">${icons[e.type]||'📝'}</span>
+        <span class="log-msg">${esc(e.msg)} <span style="color:var(--text3)">— ${esc(e.user)}</span></span>
+      </div>`).join('')
+    : '<div style="padding:20px;text-align:center;color:var(--text3)">لا يوجد نشاط مسجل</div>';
+  document.getElementById('logOverlay').classList.add('open');
+}
+function closeLog(){ document.getElementById('logOverlay').classList.remove('open'); }
+function clearLog(){ localStorage.removeItem(LOG_KEY); openLog(); toast('تم مسح السجل','success'); }
+
+// ═══════════════════════════════════════════════════════════
+//  SESSION TIMEOUT — auto-logout after 30 min inactivity
+// ═══════════════════════════════════════════════════════════
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
+let _sessionTimer = null;
+function resetSessionTimer(){
+  clearTimeout(_sessionTimer);
+  if(!currentUser) return;
+  _sessionTimer = setTimeout(()=>{
+    toast('انتهت جلستك تلقائياً بسبب عدم النشاط','warn');
+    setTimeout(doLogout, 2000);
+  }, SESSION_TIMEOUT_MS);
+}
+['mousemove','keydown','click','touchstart'].forEach(ev=>
+  document.addEventListener(ev, resetSessionTimer, {passive:true})
+);
+
+// ═══════════════════════════════════════════════════════════
+//  PASSWORD CHANGE
+// ═══════════════════════════════════════════════════════════
+function openPwd(){
+  ['pwdCurrent','pwdNew','pwdConfirm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pwdError').style.display='none';
+  document.getElementById('pwdOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('pwdCurrent').focus(),150);
+}
+function closePwd(){ document.getElementById('pwdOverlay').classList.remove('open'); }
+
+async function savePassword(){
+  const cur = document.getElementById('pwdCurrent').value;
+  const nw  = document.getElementById('pwdNew').value;
+  const cf  = document.getElementById('pwdConfirm').value;
+  const errEl = document.getElementById('pwdError');
+  const showErr = msg => { errEl.textContent=msg; errEl.style.display='block'; };
+
+  if(!cur||!nw||!cf){ showErr('يرجى ملء جميع الحقول'); return; }
+  if(nw.length < 8){ showErr('كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل'); return; }
+  if(nw!==cf){ showErr('كلمتا المرور غير متطابقتين'); return; }
+
+  const cred = _credentials[currentUser.username];
+  const curHash = await pbkdf2Hash(cur, cred.salt);
+  if(curHash !== cred.hash){ showErr('كلمة المرور الحالية غير صحيحة'); return; }
+
+  const newSalt = randomHex(16);
+  const newHash = await pbkdf2Hash(nw, newSalt);
+  _credentials[currentUser.username] = { hash:newHash, salt:newSalt, role:cred.role };
+  localStorage.setItem(CRED_KEY, JSON.stringify(_credentials));
+  logActivity('password','تم تغيير كلمة المرور');
+  closePwd();
+  toast('✅ تم تغيير كلمة المرور','success');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BIRTHDAY NOTIFICATIONS — members born this month
+// ═══════════════════════════════════════════════════════════
+function checkBirthdays(){
+  if(!familyData) return;
+  const now = new Date();
+  const todayM = now.getMonth()+1;
+  const todayD = now.getDate();
+  // Exact-date matches (birthDate field)
+  const todayBirths = allNodes.filter(n=>{
+    if(!n.birthDate || n.deathYear) return false;
+    const parts = n.birthDate.split('-');
+    return parseInt(parts[1],10)===todayM && parseInt(parts[2],10)===todayD;
+  });
+  // Coming-soon within 7 days
+  const soonBirths = allNodes.filter(n=>{
+    if(!n.birthDate || n.deathYear) return false;
+    const parts = n.birthDate.split('-');
+    const bm = parseInt(parts[1],10), bd = parseInt(parts[2],10);
+    const diff = (new Date(now.getFullYear(),bm-1,bd) - new Date(now.getFullYear(),todayM-1,todayD));
+    return diff>0 && diff<=7*24*60*60*1000;
+  });
+  if(todayBirths.length){
+    const names = todayBirths.map(n=>n.name).join(' ، ');
+    document.getElementById('birthdayText').textContent = `🎂 عيد ميلاد سعيد: ${names}`;
+    document.getElementById('birthdayBanner').classList.add('show');
+  } else if(soonBirths.length){
+    const names = soonBirths.map(n=>n.name).join(' ، ');
+    document.getElementById('birthdayText').textContent = `🎁 أعياد ميلاد قادمة خلال أسبوع: ${names}`;
+    document.getElementById('birthdayBanner').classList.add('show');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  AUTO-SAVE SNAPSHOTS — every 5 min, keep last 5
+// ═══════════════════════════════════════════════════════════
+const SNAPSHOTS_KEY = 'ft_snapshots';
+function autoSnapshot(){
+  if(!familyData||!currentUser) return;
+  try{
+    const snaps = JSON.parse(localStorage.getItem(SNAPSHOTS_KEY)||'[]');
+    snaps.unshift({ time: new Date().toISOString(), data: JSON.stringify(familyData) });
+    if(snaps.length>5) snaps.length=5;
+    localStorage.setItem(SNAPSHOTS_KEY, JSON.stringify(snaps));
+  }catch(e){}
+}
+setInterval(autoSnapshot, 5*60*1000);
+
+// ═══════════════════════════════════════════════════════════
+//  CLEAN JSON EXPORT — strips layout fields _w _x _y _px _py _pw
+// ═══════════════════════════════════════════════════════════
+function cleanNode(node){
+  const {_w,_x,_y,_px,_py,_pw,...rest}=node;
+  if(rest.children) rest.children=rest.children.map(cleanNode);
+  return rest;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GEDCOM IMPORT (basic — handles INDI records)
+// ═══════════════════════════════════════════════════════════
+function parseGedcom(text){
+  const lines = text.split(/\r?\n/);
+  const individuals = {};
+  let cur = null;
+  lines.forEach(line=>{
+    const m = line.match(/^(\d+)\s+(@\S+@|\w+)\s*(.*)?$/);
+    if(!m) return;
+    const [,lvl,tag,val] = m;
+    const level = parseInt(lvl);
+    if(level===0 && tag.startsWith('@') && val==='INDI'){
+      cur = { id: tag.replace(/@/g,''), name:'', birthDate:'', deathYear:'', city:'', country:'', notes:'', nickname:'', children:[] };
+      individuals[cur.id] = cur;
+    } else if(cur && level===1){
+      if(tag==='NAME') cur.name = (val||'').replace(/\//g,'').trim();
+      if(tag==='BIRT') cur._nextBirt=true;
+      if(tag==='DEAT') cur._nextDeat=true;
+      if(tag==='RESI') cur._nextResi=true;
+      if(tag==='NOTE') cur.notes = (cur.notes?cur.notes+' ':'')+(val||'');
+    } else if(cur && level===2){
+      if(tag==='DATE'){
+        const year = (val||'').match(/\d{4}/)?.[0]||'';
+        if(cur._nextBirt){ cur.birthDate=year?`${year}-01-01`:''; cur._nextBirt=false; }
+        if(cur._nextDeat){ cur.deathYear=year; cur._nextDeat=false; }
+      }
+      if(tag==='PLAC' && cur._nextResi){
+        const parts = (val||'').split(',');
+        cur.city    = (parts[0]||'').trim();
+        cur.country = (parts[parts.length-1]||'').trim();
+        cur._nextResi=false;
+      }
+    }
+  });
+  // Build a flat tree under a synthetic root
+  const people = Object.values(individuals).filter(p=>p.name);
+  if(!people.length) return null;
+  const root = { id:uid(), name:'مستورد من GEDCOM', nickname:'', birthYear:'', deathYear:'', location:'', notes:'', children: people };
+  return root;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  IMPORT AUTO-DETECT (JSON or GEDCOM)
+// ═══════════════════════════════════════════════════════════
+// Sanitize every node from an imported file — prevents XSS and injection via data,
+// enforces field types and lengths, regenerates all IDs to avoid collision,
+// and limits tree depth and total node count.
+const _IMPORT_MAX_NODES = 2000;
+const _IMPORT_MAX_DEPTH = 25;
+let   _importNodeCount  = 0;
+
+function _sanitizeNode(raw, depth = 0) {
+  if (depth > _IMPORT_MAX_DEPTH) throw new Error('الشجرة عميقة جداً (حد أقصى 25 مستوى)');
+  if (++_importNodeCount > _IMPORT_MAX_NODES) throw new Error(`عدد الأفراد يتجاوز الحد الأقصى (${_IMPORT_MAX_NODES})`);
+  if (typeof raw !== 'object' || !raw) throw new Error('بيانات غير صالحة');
+  const str = (v, max=120) => String(v ?? '').trim().slice(0, max);
+  return {
+    id:        uid(),                          // always fresh — no trusting external IDs
+    name:      str(raw.name) || 'مجهول',
+    nickname:  str(raw.nickname),
+    birthDate: /^\d{4}-\d{2}-\d{2}$/.test(raw.birthDate||'') ? raw.birthDate : '',
+    deathYear: /^\d{4}$/.test(String(raw.deathYear||'')) ? String(raw.deathYear) : '',
+    city:      str(raw.city),
+    country:   str(raw.country),
+    // legacy: accept old 'location' field split into city
+    ...(raw.location && !raw.city ? { city: str(raw.location) } : {}),
+    notes:     str(raw.notes, 500),
+    children:  Array.isArray(raw.children)
+      ? raw.children.map(c => _sanitizeNode(c, depth + 1))
+      : []
+  };
+}
+
+function handleImportAuto(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const MAX_SIZE = 15 * 1024 * 1024; // 15 MB
+  if(file.size > MAX_SIZE){ toast('الملف أكبر من 15MB','error'); e.target.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try{
+      const text = ev.target.result;
+      let rawData;
+      if(file.name.toLowerCase().endsWith('.ged')){
+        rawData = parseGedcom(text);
+        if(!rawData){ toast('لم يتم العثور على أفراد في ملف GEDCOM','error'); return; }
+      } else {
+        rawData = JSON.parse(text);
+        if(!rawData?.name){ toast('ملف JSON غير صالح','error'); return; }
+      }
+      // Sanitize — always, regardless of source
+      _importNodeCount = 0;
+      const data = _sanitizeNode(rawData);
+      snapshotForUndo();
+      familyData = data;
+      selectedId=null; highlightedIds.clear(); pathIds=[];
+      renderTree();
+      setTimeout(()=>fitTree(),100);
+      markUnsaved();
+      logActivity('import',`تم استيراد ملف: ${file.name.slice(0,60)} (${_importNodeCount} شخص)`);
+      toast(`✅ تم استيراد ${_importNodeCount} شخص`,'success');
+      document.getElementById('sidebarDetails').innerHTML='<div class="empty-state"><div class="icon">✅</div><p>تم تحميل الشجرة بنجاح</p></div>';
+    }catch(err){ toast('خطأ: '+String(err.message).slice(0,80),'error'); }
+  };
+  reader.readAsText(file, 'UTF-8');
+  e.target.value='';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MOBILE SIDEBAR TOGGLE
+// ═══════════════════════════════════════════════════════════
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+// Close sidebar on overlay click (mobile)
+document.getElementById('treeArea').addEventListener('click',()=>{
+  if(window.innerWidth<=768) document.getElementById('sidebar').classList.remove('mobile-open');
+});
+
+// ═══════════════════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS MODAL
+// ═══════════════════════════════════════════════════════════
+function openShortcuts(){ document.getElementById('shortcutsOverlay').classList.add('open'); }
+function closeShortcuts(){ document.getElementById('shortcutsOverlay').classList.remove('open'); }
+
+// ═══════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════
+let toastTimer=null;
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show '+type;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  KEYBOARD
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  const tag=document.activeElement?.tagName?.toLowerCase();
+  const inInput=tag==='input'||tag==='textarea'||tag==='select';
+  if(e.key==='Escape'){ closeEdit(); closeDelete(); hideCtxMenu(); closePwd(); closeLog(); closeShortcuts(); exitFocusMode(); }
+  if(e.key==='Enter'&&document.getElementById('editOverlay').classList.contains('open')) saveEdit();
+  if(e.key==='f'&&(e.ctrlKey||e.metaKey)){e.preventDefault();document.getElementById('searchInput').focus();}
+  if(e.key==='+') zoom(0.15);
+  if(e.key==='-') zoom(-0.15);
+  if(e.key==='0'&&e.ctrlKey){e.preventDefault();fitTree();}
+  // New shortcuts (only when not typing in an input)
+  if(!inInput){
+    if(e.key==='z'&&(e.ctrlKey||e.metaKey)&&!e.shiftKey){e.preventDefault();undo();}
+    if((e.key==='y'&&(e.ctrlKey||e.metaKey))||(e.key==='z'&&(e.ctrlKey||e.metaKey)&&e.shiftKey)){e.preventDefault();redo();}
+    if(e.key==='n'&&currentUser?.role==='admin'){openAddModal();}
+    if(e.key==='t'||e.key==='T'){toggleTheme();}
+    if(e.key==='F'&&!e.ctrlKey&&!e.metaKey){toggleFocusMode();}
+    if(e.key==='?'){openShortcuts();}
+    if(e.key==='Home'){centerTree();}
+  }
+});
+
+// Modal overlay click to close
+document.getElementById('editOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('editOverlay')) closeEdit(); });
+document.getElementById('deleteOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('deleteOverlay')) closeDelete(); });
+document.getElementById('photoOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('photoOverlay')) closePhoto(); });
+document.getElementById('pwdOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('pwdOverlay')) closePwd(); });
+document.getElementById('logOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('logOverlay')) closeLog(); });
+document.getElementById('shortcutsOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('shortcutsOverlay')) closeShortcuts(); });
+
+// ═══════════════════════════════════════════════════════════
+//  RESIZE
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('resize',()=>{ updateMinimap(); });
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+//  renderTree / fitTree are called from startSession() → loadFamilyData()
+//  after authentication succeeds, so nothing to do here.
+// ═══════════════════════════════════════════════════════════
+</script>
+</body>
+</html>

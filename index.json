@@ -1,0 +1,37 @@
+{
+  "name": "شجرة عائلة المجاحيد سواعد",
+  "short_name": "شجرة العائلة",
+  "description": "تطبيق إدارة شجرة عائلة المجاحيد سواعد — سوريا • فلسطين • الأردن",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#080c14",
+  "theme_color": "#c9a84c",
+  "orientation": "any",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["utilities", "lifestyle"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "إضافة شخص",
+      "short_name": "إضافة",
+      "description": "إضافة فرد جديد للشجرة",
+      "url": "/index.html#add",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
